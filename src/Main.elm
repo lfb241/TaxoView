@@ -6,12 +6,10 @@ import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Url
-import Json.Decode as D
-import VirtualDom
-import TypedSvg.Core exposing (Attribute)
-import TypedSvg.Events as Ev
-import TypedSvg.Types exposing (Length, Paint(..), percent, px)
-
+import Http
+import Route exposing(Route(..),parseUrl)
+import TypedSvg.Core
+import Json.Decode
 
 
 -- MAIN
@@ -33,34 +31,92 @@ main =
 type alias Model =
   { key : Nav.Key
   , url : Url.Url
+  , showTree : Maybe ( List(TreeNode))
+  , showMetaData : Maybe ( List (MetaData))
   }
+
+
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( Model key url, Cmd.none )
+  ( Model key url Nothing Nothing, Cmd.none )
+
+-- HTTP
+
+getTreeData : String -> Cmd Msg
+getTreeData url =
+    Http.get
+        { url = url
+        , expect = Http.expectString GotTreeData
+        }
+
+
 
 -- UPDATE
 
 type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
+  | GotTreeData (Result Http.Error String)
+
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  case msg of
-    LinkClicked urlRequest ->
-      case urlRequest of
-        Browser.Internal url ->
-          ( model, Nav.pushUrl model.key (Url.toString url) )
+    case msg of
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Nav.pushUrl model.key (Url.toString url)
+                    )
 
-        Browser.External href ->
-          ( model, Nav.load href )
+                Browser.External href ->
+                    ( model
+                    , Nav.load href
+                    )
 
-    UrlChanged url ->
-      ( { model | url = url }
-      , Cmd.none
-      )
+        UrlChanged url ->
+            case parseUrl url of
+                Tree treeName ->
+                    ( { model
+                        | url = url
+                      }
+                    , getTreeData treeName
+                    )
+
+                Node _ nodeName ->
+                    ( { model
+                        | url = url, showMetaData = (getMetaData nodeName)
+                      }
+                    , Cmd.none
+                    )
+
+                Home ->
+                    ( { model
+                        | url = url
+                      }
+                    , Cmd.none
+                    )
+
+        GotTreeData result ->
+            case result of
+                Ok fullData ->
+                    let
+                        tree =
+                            decodeTreeString fullData
+                    in
+                    case tree of
+                        Ok treeData ->
+                            ( { model | showTree = Just treeData}, Cmd.none )
+
+                        Err _ ->
+                            (  {model | showTree = Nothing} , Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
+
 
 
 
@@ -84,6 +140,8 @@ view model =
   }
 
 
+
+{-
 --- Hilfsmethode für Arbeiten mit Mausposition
 
 type alias MousePosition =
@@ -104,4 +162,4 @@ onMouseMove mapMousePositionToMsg =
     Ev.on "mousemove"
         (VirtualDom.Normal
             (D.map mapMousePositionToMsg offsetMousePosition)
-        )
+        ) -}
