@@ -1,0 +1,143 @@
+{
+  "id": "primates",
+  "label": "Primates",
+  "rank": "order",
+  "metadata": {
+    "scientificName": "Preimates",
+    "commonName": "Primaten",
+    "description": "Ordnung der Säugetiere, zu der Affen, Menschenaffen und der Mensch gehören."
+  },
+  "children": [
+    {
+      "id": "strepsirrhini",
+      "label": "Strepsirrhini",
+      "rank": "suborder",
+      "metadata": {
+        "commonName": "Feuchtnasenprimaten"
+      },
+      "children": [
+        {
+          "id": "lemuridae",
+          "label": "Lemuridae",
+          "rank": "family",
+          "metadata": {
+            "commonName": "Lemuren"
+          },
+          "children": []
+        },
+        {
+          "id": "lorisidae",
+          "label": "Lorisidae",
+          "rank": "family",
+          "metadata": {
+            "commonName": "Loris"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "haplorhini",
+      "label": "Haplorhini",
+      "rank": "suborder",
+      "metadata": {
+        "commonName": "Trockennasenprimaten"
+      },
+      "children": [
+        {
+          "id": "tarsiidae",
+          "label": "Tarsiidae",
+          "rank": "family",
+          "metadata": {
+            "commonName": "Koboldmakis"
+          },
+          "children": []
+        },
+        {
+          "id": "simiiformes",
+          "label": "Simiiformes",
+          "rank": "infraorder",
+          "metadata": {
+            "commonName": "Affen"
+          },
+          "children": [
+            {
+              "id": "cebidae",
+              "label": "Cebidae",
+              "rank": "family",
+              "metadata": {
+                "commonName": "Kapuzinerartige"
+              },
+              "children": []
+            },
+            {
+              "id": "cercopithecidae",
+              "label": "Cercopithecidae",
+              "rank": "family",
+              "metadata": {
+                "commonName": "Altweltaffen"
+              },
+              "children": []
+            },
+            {
+              "id": "hominidae",
+              "label": "Hominidae",
+              "rank": "family",
+              "metadata": {
+                "commonName": "Menschenaffen"
+              },
+              "children": [
+                {
+                  "id": "pongo",
+                  "label": "Pongo",
+                  "rank": "genus",
+                  "metadata": {
+                    "commonName": "Orang-Utans"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "gorilla",
+                  "label": "Gorilla",
+                  "rank": "genus",
+                  "metadata": {
+                    "commonName": "Gorillas"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "pan",
+                  "label": "Pan",
+                  "rank": "genus",
+                  "metadata": {
+                    "commonName": "Schimpansen"
+                  },
+                  "children": []
+                },
+                {
+                  "id": "homo",
+                  "label": "Homo",
+                  "rank": "genus",
+                  "metadata": {
+                    "commonName": "Menschen"
+                  },
+                  "children": [
+                    {
+                      "id": "homo_sapiens",
+                      "label": "Homo sapiens",
+                      "rank": "species",
+                      "metadata": {
+                        "commonName": "Mensch"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
