@@ -6,4 +6,8 @@ SVG-Top-Down-Darstellung von biologischen Taxonomien (Daten von: https://www.gbi
 
 ### To-Do
 
-- To-Dos anlegen :)
+- Read https://guide.elm-lang.org/webapps/structure
+- Define HTML/CSS-Seitenlayouts (Was kann die Seite? Wie sieht sie aus?)
+- Define JSON.Decoder for Trees (Wie kommen wir von JSON zu Elm-Daten?)
+- Define SVG-Tree-Darstellung using elm-visualization (Wie kommen wir von Elm-Daten zu Baumdarstellung?)
+- Add Metadata to example data (Um Metadaten-Modal bei Knotenklick aufzurufen)
