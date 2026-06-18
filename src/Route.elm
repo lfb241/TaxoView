@@ -6,14 +6,14 @@ import Url.Parser exposing (Parser, (</>), top, map, oneOf, s, string, parse)
 
 type Route
   = 
-  Home
+  Top
   | Tree String
   | Node String String
 
 routeParser : Parser (Route -> a) a
 routeParser =
   oneOf
-    [ map Home top
+    [ map Top top
     , map Node (s "tree" </> string </> s "node" </> string)
     , map Tree (s "tree" </> string)
     ]
@@ -22,7 +22,7 @@ routeParser =
 parseUrl : Url -> Route
 parseUrl url =
     parse routeParser url
-        |> Maybe.withDefault Home
+        |> Maybe.withDefault Top
 
 -- /tree/primates --> Just(Tree "primates")
 -- /tree/primates/human --> Just(Node "primates" "human")

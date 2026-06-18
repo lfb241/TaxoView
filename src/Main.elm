@@ -1,15 +1,15 @@
 module Main exposing (main)
 
-
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Url
+import Html exposing (Html, a, button, div, text)
+import Html.Attributes exposing (href)
+import Html.Events exposing (onClick)
 import Http
-import Route exposing(Route(..),parseUrl)
-import TypedSvg.Core
-import Json.Decode
+import Route exposing (Route(..), parseUrl)
+import Tree exposing (TreeNode, decodeTreeString, toString)
+import Url
+
 
 
 -- MAIN
@@ -17,149 +17,172 @@ import Json.Decode
 
 main : Program () Model Msg
 main =
-  Browser.application
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    , onUrlChange = UrlChanged
-    , onUrlRequest = LinkClicked
-    }
+    Browser.application
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = \_ -> Sub.none
+        , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
+        }
+
+
 
 -- MODEL
 
-type alias Model =
-  { key : Nav.Key
-  , url : Url.Url
-  , showTree : Maybe ( List(TreeNode))
-  , showMetaData : Maybe ( List (MetaData))
-  }
 
+type alias Model =
+    { key : Nav.Key
+    , url : Url.Url
+    , state : State
+    }
+
+
+type State
+    = Home
+    | Viz { title : String, nodes : List TreeNode }
+
+
+
+-- INIT
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-  ( Model key url Nothing Nothing, Cmd.none )
+init _ url key =
+    let
+        model =
+            { key = key
+            , url = url
+            , state = Home
+            }
+    in
+    loadFromUrl url model
 
--- HTTP
 
-getTreeData : String -> Cmd Msg
-getTreeData url =
-    Http.get
-        { url = url
-        , expect = Http.expectString GotTreeData
-        }
+
+-- ROUTING CENTRAL LOGIC
+
+
+loadFromUrl : Url.Url -> Model -> ( Model, Cmd Msg )
+loadFromUrl url model =
+    case parseUrl url of
+        Tree name ->
+            ( model, getTreeData name )
+
+        _ ->
+            ( { model | state = Home }, Cmd.none )
+
+
+
+-- MESSAGES
+
+
+type Msg
+    = LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
+    | LoadData String
+    | GotTree (Result Http.Error String)
 
 
 
 -- UPDATE
 
-type Msg
-  = LinkClicked Browser.UrlRequest
-  | UrlChanged Url.Url
-  | GotTreeData (Result Http.Error String)
-
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        LinkClicked urlRequest ->
-            case urlRequest of
+        LinkClicked req ->
+            case req of
                 Browser.Internal url ->
-                    ( model
-                    , Nav.pushUrl model.key (Url.toString url)
-                    )
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
 
                 Browser.External href ->
-                    ( model
-                    , Nav.load href
-                    )
+                    ( model, Nav.load href )
 
         UrlChanged url ->
-            case parseUrl url of
-                Tree treeName ->
-                    ( { model
-                        | url = url
-                      }
-                    , getTreeData treeName
-                    )
+            loadFromUrl url { model | url = url }
 
-                Node _ nodeName ->
-                    ( { model
-                        | url = url, showMetaData = (getMetaData nodeName)
-                      }
-                    , Cmd.none
-                    )
+        LoadData s ->
+            ( model, getTreeData s )
 
-                Home ->
-                    ( { model
-                        | url = url
-                      }
-                    , Cmd.none
-                    )
-
-        GotTreeData result ->
+        GotTree result ->
             case result of
-                Ok fullData ->
+                Ok data ->
                     let
-                        tree =
-                            decodeTreeString fullData
+                        nodes =
+                            decodeTreeString data
                     in
-                    case tree of
-                        Ok treeData ->
-                            ( { model | showTree = Just treeData}, Cmd.none )
-
+                    case nodes of
+                        Ok nodeList ->
+                            ( { model
+                                | state =
+                                    Viz
+                                        { title = "Visualization"
+                                        , nodes = nodeList
+                                        }
+                              }
+                            , Cmd.none
+                            )
                         Err _ ->
-                            (  {model | showTree = Nothing} , Cmd.none )
+                            ( { model | state = Home }, Cmd.none )
 
                 Err _ ->
-                    ( model, Cmd.none )
+                    ( { model | state = Home }, Cmd.none )
 
 
 
+-- HTTP
 
 
--- SUBSCRIPTIONS
+-- Muss für Verwendung mit Backend etwas umgewandelt werden
+getTreeData : String -> Cmd Msg
+getTreeData name =
+    Http.get
+        { url = "/data/" ++ name ++ ".json"
+        , expect = Http.expectString GotTree
+        }
 
 
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-  Sub.none
 
 -- VIEW
 
+
 view : Model -> Browser.Document Msg
 view model =
-  { title = "URL Interceptor"
-  , body =
-      [ text "The current URL is: "
-      , b [] [ text (Url.toString model.url) ]
-
-      ]
-  }
-
-
-
-{-
---- Hilfsmethode für Arbeiten mit Mausposition
-
-type alias MousePosition =
-    { x : Int
-    , y : Int
+    { title = "TaxoView"
+    , body =
+        [ headerView
+        , contentView model.state
+        , footerView
+        ]
     }
 
 
-offsetMousePosition : D.Decoder MousePosition
-offsetMousePosition =
-    D.map2 MousePosition
-        (D.field "offsetX" D.int)
-        (D.field "offsetY" D.int)
+headerView : Html Msg
+headerView =
+    div []
+        [ a [ href "/" ] [ text "Back to Home" ]
+        ]
 
 
-onMouseMove : (MousePosition -> msg) -> Attribute msg
-onMouseMove mapMousePositionToMsg =
-    Ev.on "mousemove"
-        (VirtualDom.Normal
-            (D.map mapMousePositionToMsg offsetMousePosition)
-        ) -}
+footerView : Html Msg
+footerView =
+    div [] [ text "lfb241 & cactusiusss" ]
+
+
+contentView : State -> Html Msg
+contentView state =
+    case state of
+        Home ->
+            div []
+                [ text "Home: "
+                , button [ onClick (LoadData "primates") ] [ text "Load sample (primates)" ]
+                , button [ onClick (LoadData "felidae") ] [ text "Load sample (felidae)" ]
+
+                ]
+
+        Viz viz ->
+            div []
+                [ text viz.title
+                , div [] [ text (toString viz.nodes) ]
+                ]
