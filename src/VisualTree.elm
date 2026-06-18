@@ -3,11 +3,9 @@ module VisualTree exposing (draw)
 
 import Html exposing (Html)
 import Tree exposing (TreeNode(..))
-import Metadata exposing (Metadata)
 import TypedSvg exposing (svg, circle, line, text_, g)
 import TypedSvg.Attributes exposing (cx, cy, r, fill, stroke, x, y, fontSize, viewBox)
 import TypedSvg.Attributes.InNamespace exposing (attr)
-import Url
 
 --takes list of trees -> SVG
 draw : Maybe (List TreeNode) -> Html msg
@@ -50,10 +48,15 @@ renderTree (TreeNode id label rank maybeMeta maybeChildren) xPos yPos level =
                             childY = yPos + 80
                         in
                         g []
-                            [ --paarent-kind
-                              line [ stroke "#dee2e6", cx xPos, cy yPos, attr "x2" (String.fromFloat childX), attr "y2" (String.fromFloat childY) ] []
-                            , 
-                              renderTree child childX childY (level + 1)
+                            [ line
+                                [ attr "x1" (String.fromFloat xPos)
+                                , attr "y1" (String.fromFloat yPos)
+                                , attr "x2" (String.fromFloat childX)
+                                , attr "y2" (String.fromFloat childY)
+                                , stroke "#dee2e6"
+                                ]
+                                []
+                            , renderTree child childX childY (level + 1)
                             ]
                     ) children
     in
