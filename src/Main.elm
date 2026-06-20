@@ -140,7 +140,7 @@ update msg model =
 getTreeData : String -> Cmd Msg
 getTreeData name =
     Http.get
-        { url = "/data/" ++ name ++ ".json"
+        { url = "TaxoView/data/" ++ name ++ ".json"
         , expect = Http.expectString GotTree
         }
 
