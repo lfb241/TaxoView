@@ -11,3 +11,6 @@ type Metadata =
 
 -- getMetaData: String -> List(MetaData)
 -- getMetaData _ =
+
+toPair: Metadata -> (String, String)
+toPair metadata = ("Test","Test")

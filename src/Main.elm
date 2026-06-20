@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, button, div, text)
+import Html exposing (Html, a, button, div, text, h2, h3, p, ul, li, b)
 import Html.Attributes exposing (href)
 import Html.Events exposing (onClick)
 import Http
@@ -120,6 +120,7 @@ update msg model =
                                     Viz
                                         { title = "Visualization"
                                         , nodes = nodeList
+                                        , activeMetadata = Nothing
                                         }
                               }
                             , Cmd.none
@@ -182,12 +183,12 @@ contentView state =
 
                 ]
 
-        {-| Viz viz ->
+        {--| Viz viz ->
             div []
                 [ text viz.title
                 , div [] [ text (toString viz.nodes) ]
                 ]
--}
+--}
         Viz viz ->
             div []
                 [ h2 [] [ text viz.title ]
@@ -207,7 +208,7 @@ contentView state =
                             ul [] 
                                 (List.map (\meta -> 
                                     let 
-                                        (title, value) = Metadata.toPair meta
+                                        (title, value) = toPair meta
                                     in 
                                     li [] [ b [] [ text (title ++ ": ") ], text value ]
                                  ) listOkMeta)
