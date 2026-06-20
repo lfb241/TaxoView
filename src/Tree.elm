@@ -1,7 +1,7 @@
 module Tree exposing (TreeNode(..), decodeTreeString, toString)
 import Metadata exposing(Metadata(..))
 import String exposing (repeat)
-
+import Json.Decode --for .decodeString and .Error
 import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
 --- id, label, rank, metadata, children
