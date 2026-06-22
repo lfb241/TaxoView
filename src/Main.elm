@@ -11,6 +11,7 @@ import Tree exposing (TreeNode, decodeTreeString, toString)
 import Url
 import Metadata exposing (Metadata(..), toPair)
 import VisualTree
+import GbiApi
 
 
 -- MAIN
