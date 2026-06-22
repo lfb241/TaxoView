@@ -2,8 +2,8 @@ module VisualTree exposing (draw)
 
 import Html exposing (Html)
 import Tree exposing (TreeNode(..))
-import TypedSvg exposing (svg, circle, line, text_, g)
-import TypedSvg.Attributes exposing (cx, cy, r, fill, stroke, x, y, fontSize, viewBox)
+import TypedSvg exposing (circle, g, line, svg, text_)
+import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Attributes.InNamespace exposing (attr)
 import TypedSvg.Events exposing (onClick)
 
@@ -17,16 +17,24 @@ draw onSelect maybeTree =
         Just [] ->
             Html.div [] [ Html.text "Empty Tree" ]
 
-        Just (rootNode :: _) ->
+        Just roots ->
             svg [ viewBox 0 0 800 400 ]
-                [ renderTree onSelect rootNode 400 50 1 ]
+                (List.indexedMap
+                    (\index rootNode ->
+                        renderTree onSelect rootNode (200 + toFloat index * 250) 50 1
+                    )
+                    roots
+                )
 
 
 renderTree : (TreeNode -> msg) -> TreeNode -> Float -> Float -> Int -> Html msg
-renderTree onSelect (TreeNode id label rank maybeMeta maybeChildren) xPos yPos level =
+renderTree onSelect node xPos yPos level =
     let
+        TreeNode id label rank maybeMeta maybeChildren =
+            node
+
         nodeColor =
-            case rank of
+            case String.toLower rank of
                 "family" ->
                     "#ff6b6b"
 
@@ -36,8 +44,11 @@ renderTree onSelect (TreeNode id label rank maybeMeta maybeChildren) xPos yPos l
                 "genus" ->
                     "#51cf66"
 
-                _ ->
+                "species" ->
                     "#fcc419"
+
+                _ ->
+                    "#adb5bd"
 
         childrenSvg =
             case maybeChildren of
@@ -49,7 +60,7 @@ renderTree onSelect (TreeNode id label rank maybeMeta maybeChildren) xPos yPos l
                         (\index child ->
                             let
                                 childX =
-                                    xPos + (toFloat index - (toFloat (List.length children - 1) / 2)) * (150 / toFloat level)
+                                    xPos + (toFloat index - (toFloat (List.length children - 1) / 2)) * (180 / toFloat level)
 
                                 childY =
                                     yPos + 80
@@ -60,7 +71,7 @@ renderTree onSelect (TreeNode id label rank maybeMeta maybeChildren) xPos yPos l
                                     , attr "y1" (String.fromFloat yPos)
                                     , attr "x2" (String.fromFloat childX)
                                     , attr "y2" (String.fromFloat childY)
-                                    , stroke "#dee2e6"
+                                    , attr "stroke" "#dee2e6"
                                     ]
                                     []
                                 , renderTree onSelect child childX childY (level + 1)
@@ -70,19 +81,20 @@ renderTree onSelect (TreeNode id label rank maybeMeta maybeChildren) xPos yPos l
     in
     g []
         ([ circle
-            [ cx xPos
-            , cy yPos
-            , r 15
-            , fill nodeColor
-            , onClick (onSelect (TreeNode id label rank maybeMeta maybeChildren))
+            [ attr "cx" (String.fromFloat xPos)
+            , attr "cy" (String.fromFloat yPos)
+            , attr "r" "15"
+            , attr "fill" nodeColor
+            , attr "cursor" "pointer"
+            , onClick (onSelect node)
             ]
             []
          , text_
-            [ x xPos
-            , y (yPos - 20)
-            , fontSize "12"
+            [ attr "x" (String.fromFloat xPos)
+            , attr "y" (String.fromFloat (yPos - 20))
+            , attr "font-size" "12"
             , attr "text-anchor" "middle"
-            , fill "#343a40"
+            , attr "fill" "#343a40"
             ]
             [ Html.text label ]
          ]
