@@ -4570,44 +4570,7 @@ function _Url_percentDecode(string)
 	{
 		return $elm$core$Maybe$Nothing;
 	}
-}
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-var $author$project$Main$LinkClicked = function (a) {
+}var $author$project$Main$LinkClicked = function (a) {
 	return {$: 'LinkClicked', a: a};
 };
 var $author$project$Main$UrlChanged = function (a) {
@@ -6715,23 +6678,23 @@ var $author$project$Main$update = F2(
 						model,
 						{url: url}));
 			case 'LoadData':
-				var s = msg.a;
+				var name = msg.a;
 				return _Utils_Tuple2(
 					model,
-					$author$project$Main$getTreeData(s));
-			default:
+					$author$project$Main$getTreeData(name));
+			case 'GotTree':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					var data = result.a;
-					var nodes = $author$project$Tree$decodeTreeString(data);
-					if (nodes.$ === 'Ok') {
-						var nodeList = nodes.a;
+					var _v3 = $author$project$Tree$decodeTreeString(data);
+					if (_v3.$ === 'Ok') {
+						var nodeList = _v3.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
 									state: $author$project$Main$Viz(
-										{nodes: nodeList, title: 'Visualization'})
+										{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization'})
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
@@ -6748,17 +6711,247 @@ var $author$project$Main$update = F2(
 							{state: $author$project$Main$Home}),
 						$elm$core$Platform$Cmd$none);
 				}
+			default:
+				var _v4 = msg.a;
+				var maybeMetadata = _v4.d;
+				var _v5 = model.state;
+				if (_v5.$ === 'Viz') {
+					var viz = _v5.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								state: $author$project$Main$Viz(
+									_Utils_update(
+										viz,
+										{activeMetadata: maybeMetadata}))
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$LoadData = function (a) {
 	return {$: 'LoadData', a: a};
 };
+var $author$project$Main$SelectNode = function (a) {
+	return {$: 'SelectNode', a: a};
+};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm_community$typed_svg$TypedSvg$Core$attribute = $elm$virtual_dom$VirtualDom$attribute;
+var $elm$virtual_dom$VirtualDom$nodeNS = F2(
+	function (namespace, tag) {
+		return A2(
+			_VirtualDom_nodeNS,
+			namespace,
+			_VirtualDom_noScript(tag));
+	});
+var $elm_community$typed_svg$TypedSvg$Core$node = $elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
+var $elm_community$typed_svg$TypedSvg$circle = $elm_community$typed_svg$TypedSvg$Core$node('circle');
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm_community$typed_svg$TypedSvg$g = $elm_community$typed_svg$TypedSvg$Core$node('g');
+var $elm_community$typed_svg$TypedSvg$line = $elm_community$typed_svg$TypedSvg$Core$node('line');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
 var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm_community$typed_svg$TypedSvg$Events$on = $elm$virtual_dom$VirtualDom$on;
+var $elm_community$typed_svg$TypedSvg$Events$simpleOn = function (name) {
+	return function (msg) {
+		return A2(
+			$elm_community$typed_svg$TypedSvg$Events$on,
+			name,
+			$elm$virtual_dom$VirtualDom$Normal(
+				$elm$json$Json$Decode$succeed(msg)));
+	};
+};
+var $elm_community$typed_svg$TypedSvg$Events$onClick = $elm_community$typed_svg$TypedSvg$Events$simpleOn('click');
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm_community$typed_svg$TypedSvg$text_ = $elm_community$typed_svg$TypedSvg$Core$node('text');
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$VisualTree$renderTree = F5(
+	function (onSelect, node, xPos, yPos, level) {
+		var _v0 = function () {
+			var nodeLabel = node.b;
+			var nodeRank = node.c;
+			var nodeChildren = node.e;
+			return _Utils_Tuple3(nodeLabel, nodeRank, nodeChildren);
+		}();
+		var label = _v0.a;
+		var rank = _v0.b;
+		var maybeChildren = _v0.c;
+		var childrenSvg = function () {
+			if (maybeChildren.$ === 'Nothing') {
+				return _List_Nil;
+			} else {
+				var children = maybeChildren.a;
+				return A2(
+					$elm$core$List$indexedMap,
+					F2(
+						function (index, child) {
+							var childY = yPos + 80;
+							var childX = xPos + ((index - (($elm$core$List$length(children) - 1) / 2)) * (180 / level));
+							return A2(
+								$elm_community$typed_svg$TypedSvg$g,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm_community$typed_svg$TypedSvg$line,
+										_List_fromArray(
+											[
+												A2(
+												$elm_community$typed_svg$TypedSvg$Core$attribute,
+												'x1',
+												$elm$core$String$fromFloat(xPos)),
+												A2(
+												$elm_community$typed_svg$TypedSvg$Core$attribute,
+												'y1',
+												$elm$core$String$fromFloat(yPos)),
+												A2(
+												$elm_community$typed_svg$TypedSvg$Core$attribute,
+												'x2',
+												$elm$core$String$fromFloat(childX)),
+												A2(
+												$elm_community$typed_svg$TypedSvg$Core$attribute,
+												'y2',
+												$elm$core$String$fromFloat(childY)),
+												A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'stroke', '#dee2e6')
+											]),
+										_List_Nil),
+										A5($author$project$VisualTree$renderTree, onSelect, child, childX, childY, level + 1)
+									]));
+						}),
+					children);
+			}
+		}();
+		var nodeColor = function () {
+			var _v2 = $elm$core$String$toLower(rank);
+			switch (_v2) {
+				case 'family':
+					return '#ff6b6b';
+				case 'subfamily':
+					return '#4dadf7';
+				case 'genus':
+					return '#51cf66';
+				case 'species':
+					return '#fcc419';
+				default:
+					return '#adb5bd';
+			}
+		}();
+		return A2(
+			$elm_community$typed_svg$TypedSvg$g,
+			_List_Nil,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						A2(
+						$elm_community$typed_svg$TypedSvg$circle,
+						_List_fromArray(
+							[
+								A2(
+								$elm_community$typed_svg$TypedSvg$Core$attribute,
+								'cx',
+								$elm$core$String$fromFloat(xPos)),
+								A2(
+								$elm_community$typed_svg$TypedSvg$Core$attribute,
+								'cy',
+								$elm$core$String$fromFloat(yPos)),
+								A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'r', '15'),
+								A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'fill', nodeColor),
+								A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'cursor', 'pointer'),
+								$elm_community$typed_svg$TypedSvg$Events$onClick(
+								onSelect(node))
+							]),
+						_List_Nil),
+						A2(
+						$elm_community$typed_svg$TypedSvg$text_,
+						_List_fromArray(
+							[
+								A2(
+								$elm_community$typed_svg$TypedSvg$Core$attribute,
+								'x',
+								$elm$core$String$fromFloat(xPos)),
+								A2(
+								$elm_community$typed_svg$TypedSvg$Core$attribute,
+								'y',
+								$elm$core$String$fromFloat(yPos - 20)),
+								A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'font-size', '12'),
+								A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'text-anchor', 'middle'),
+								A2($elm_community$typed_svg$TypedSvg$Core$attribute, 'fill', '#343a40')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(label)
+							]))
+					]),
+				childrenSvg));
+	});
+var $elm_community$typed_svg$TypedSvg$svg = $elm_community$typed_svg$TypedSvg$Core$node('svg');
+var $elm_community$typed_svg$TypedSvg$Attributes$viewBox = F4(
+	function (minX, minY, vWidth, vHeight) {
+		return A2(
+			$elm_community$typed_svg$TypedSvg$Core$attribute,
+			'viewBox',
+			A2(
+				$elm$core$String$join,
+				' ',
+				A2(
+					$elm$core$List$map,
+					$elm$core$String$fromFloat,
+					_List_fromArray(
+						[minX, minY, vWidth, vHeight]))));
+	});
+var $author$project$VisualTree$draw = F2(
+	function (onSelect, maybeTree) {
+		if (maybeTree.$ === 'Nothing') {
+			return A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('No Data')
+					]));
+		} else {
+			if (!maybeTree.a.b) {
+				return A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Empty Tree')
+						]));
+			} else {
+				var roots = maybeTree.a;
+				return A2(
+					$elm_community$typed_svg$TypedSvg$svg,
+					_List_fromArray(
+						[
+							A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, 1200, 800)
+						]),
+					A2(
+						$elm$core$List$indexedMap,
+						F2(
+							function (index, rootNode) {
+								return A5($author$project$VisualTree$renderTree, onSelect, rootNode, 200 + (index * 250), 50, 1);
+							}),
+						roots));
+			}
+		}
+	});
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$Events$on = F2(
 	function (event, decoder) {
 		return A2(
@@ -6772,79 +6965,50 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Tree$metadataToString = function (meta) {
-	switch (meta.$) {
-		case 'ScientificName':
-			var s = meta.a;
-			return 'scientific: ' + s;
-		case 'CommonName':
-			var s = meta.a;
-			return 'common: ' + s;
-		default:
-			var s = meta.a;
-			return 'desc: ' + s;
-	}
+var $elm$html$Html$b = _VirtualDom_node('b');
+var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $author$project$Metadata$toPair = function (metadata) {
+	return _Utils_Tuple2('Test', 'Test');
 };
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
-var $elm$core$String$repeatHelp = F3(
-	function (n, chunk, result) {
-		return (n <= 0) ? result : A3(
-			$elm$core$String$repeatHelp,
-			n >> 1,
-			_Utils_ap(chunk, chunk),
-			(!(n & 1)) ? result : _Utils_ap(result, chunk));
-	});
-var $elm$core$String$repeat = F2(
-	function (n, chunk) {
-		return A3($elm$core$String$repeatHelp, n, chunk, '');
-	});
-var $author$project$Tree$treeNodeToString = F2(
-	function (indent, _v0) {
-		var id = _v0.a;
-		var label = _v0.b;
-		var rank = _v0.c;
-		var metadata = _v0.d;
-		var children = _v0.e;
-		var metaStr = function () {
-			if (metadata.$ === 'Nothing') {
-				return '';
-			} else {
-				var ms = metadata.a;
-				return ' [' + (A2(
-					$elm$core$String$join,
-					', ',
-					A2($elm$core$List$map, $author$project$Tree$metadataToString, ms)) + ']');
-			}
-		}();
-		var ind = A2($elm$core$String$repeat, indent, '  ');
-		var header = ind + (label + (' (' + (rank + (') - ' + (id + (metaStr + '\n'))))));
-		var childrenStr = function () {
-			if (children.$ === 'Nothing') {
-				return '';
-			} else {
-				var cs = children.a;
-				return A2(
-					$elm$core$String$join,
-					'',
-					A2(
-						$elm$core$List$map,
-						$author$project$Tree$treeNodeToString(indent + 1),
-						cs));
-			}
-		}();
-		return _Utils_ap(header, childrenStr);
-	});
-var $author$project$Tree$toString = function (nodes) {
-	return A2(
-		$elm$core$String$join,
-		'',
-		A2(
-			$elm$core$List$map,
-			$author$project$Tree$treeNodeToString(0),
-			nodes));
+var $elm$html$Html$ul = _VirtualDom_node('ul');
+var $author$project$Main$viewMetadata = function (maybeMetadata) {
+	if (maybeMetadata.$ === 'Nothing') {
+		return A2(
+			$elm$html$Html$p,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Klicken Sie auf einen Knoten, um Details zu sehen.')
+				]));
+	} else {
+		var metadataList = maybeMetadata.a;
+		return A2(
+			$elm$html$Html$ul,
+			_List_Nil,
+			A2(
+				$elm$core$List$map,
+				function (meta) {
+					var _v1 = $author$project$Metadata$toPair(meta);
+					var title = _v1.a;
+					var value = _v1.b;
+					return A2(
+						$elm$html$Html$li,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$b,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(title + ': ')
+									])),
+								$elm$html$Html$text(value)
+							]));
+				},
+				metadataList));
+	}
 };
 var $author$project$Main$contentView = function (state) {
 	if (state.$ === 'Home') {
@@ -6884,14 +7048,43 @@ var $author$project$Main$contentView = function (state) {
 			_List_Nil,
 			_List_fromArray(
 				[
-					$elm$html$Html$text(viz.title),
+					A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(viz.title)
+						])),
 					A2(
 					$elm$html$Html$div,
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text(
-							$author$project$Tree$toString(viz.nodes))
+							A2(
+							$elm$html$Html$h3,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Taxonomie-Baum')
+								])),
+							A2(
+							$author$project$VisualTree$draw,
+							$author$project$Main$SelectNode,
+							$elm$core$Maybe$Just(viz.nodes))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$h3,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Metadaten Details')
+								])),
+							$author$project$Main$viewMetadata(viz.activeMetadata)
 						]))
 				]));
 	}
