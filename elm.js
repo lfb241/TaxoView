@@ -6204,7 +6204,7 @@ var $author$project$Main$getTreeData = function (name) {
 	return $elm$http$Http$get(
 		{
 			expect: $elm$http$Http$expectString($author$project$Main$GotTree),
-			url: '/data/' + (name + '.json')
+			url: '/TaxoView/data/' + (name + '.json')
 		});
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
@@ -7045,7 +7045,7 @@ var $author$project$Main$viewMetadata = function (maybeMetadata) {
 				]));
 	} else {
 		var metadataList = maybeMetadata.a;
-		return $elm$html$Html$text('test');
+		return $elm$html$Html$text('testtestetst');
 	}
 };
 var $author$project$Main$contentView = function (state) {
