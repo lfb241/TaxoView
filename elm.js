@@ -6204,7 +6204,7 @@ var $author$project$Main$getTreeData = function (name) {
 	return $elm$http$Http$get(
 		{
 			expect: $elm$http$Http$expectString($author$project$Main$GotTree),
-			url: '/docs/data/' + (name + '.json')
+			url: '/data/' + (name + '.json')
 		});
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
