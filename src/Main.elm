@@ -257,7 +257,7 @@ viewMetadata maybeMetadata =
             p [] [ text "Klicken Sie auf einen Knoten, um Details zu sehen." ]
 
         Just metadataList ->
-            text "test"
+            text "testtestetst"
 
 -- rekursive Methode um im Baum den Knoten mit der richtigen ID zu finden
 findNode : String -> List TreeNode -> Maybe TreeNode
