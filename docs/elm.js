@@ -5366,6 +5366,58 @@ var $elm$core$Task$perform = F2(
 	});
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$Home = {$: 'Home'};
+var $author$project$Main$Viz = function (a) {
+	return {$: 'Viz', a: a};
+};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Tree$TreeNode = F5(
+	function (a, b, c, d, e) {
+		return {$: 'TreeNode', a: a, b: b, c: c, d: d, e: e};
+	});
+var $author$project$Main$findNode = F2(
+	function (targetId, nodes) {
+		findNode:
+		while (true) {
+			if (!nodes.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var _v1 = nodes.a;
+				var id = _v1.a;
+				var label = _v1.b;
+				var rank = _v1.c;
+				var meta = _v1.d;
+				var children = _v1.e;
+				var rest = nodes.b;
+				if (_Utils_eq(id, targetId)) {
+					return $elm$core$Maybe$Just(
+						A5($author$project$Tree$TreeNode, id, label, rank, meta, children));
+				} else {
+					var _v2 = A2(
+						$elm$core$Maybe$andThen,
+						$author$project$Main$findNode(targetId),
+						children);
+					if (_v2.$ === 'Just') {
+						var found = _v2.a;
+						return $elm$core$Maybe$Just(found);
+					} else {
+						var $temp$targetId = targetId,
+							$temp$nodes = rest;
+						targetId = $temp$targetId;
+						nodes = $temp$nodes;
+						continue findNode;
+					}
+				}
+			}
+		}
+	});
 var $author$project$Main$GotTree = function (a) {
 	return {$: 'GotTree', a: a};
 };
@@ -6427,7 +6479,6 @@ var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 var $author$project$Route$routeParser = $elm$url$Url$Parser$oneOf(
 	_List_fromArray(
 		[
-			A2($elm$url$Url$Parser$map, $author$project$Route$Top, $elm$url$Url$Parser$top),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$Node,
@@ -6447,7 +6498,8 @@ var $author$project$Route$routeParser = $elm$url$Url$Parser$oneOf(
 			A2(
 				$elm$url$Url$Parser$slash,
 				$elm$url$Url$Parser$s('tree'),
-				$elm$url$Url$Parser$string))
+				$elm$url$Url$Parser$string)),
+			A2($elm$url$Url$Parser$map, $author$project$Route$Top, $elm$url$Url$Parser$top)
 		]));
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
@@ -6467,17 +6519,46 @@ var $author$project$Route$parseUrl = function (url) {
 var $author$project$Main$loadFromUrl = F2(
 	function (url, model) {
 		var _v0 = $author$project$Route$parseUrl(url);
-		if (_v0.$ === 'Tree') {
-			var name = _v0.a;
-			return _Utils_Tuple2(
-				model,
-				$author$project$Main$getTreeData(name));
-		} else {
-			return _Utils_Tuple2(
-				_Utils_update(
+		switch (_v0.$) {
+			case 'Tree':
+				var name = _v0.a;
+				return _Utils_Tuple2(
 					model,
-					{state: $author$project$Main$Home}),
-				$elm$core$Platform$Cmd$none);
+					$author$project$Main$getTreeData(name));
+			case 'Node':
+				var treename = _v0.a;
+				var nodename = _v0.b;
+				var _v1 = model.state;
+				if (_v1.$ === 'Viz') {
+					var viz = _v1.a;
+					var metadata = A2(
+						$elm$core$Maybe$andThen,
+						function (_v2) {
+							var meta = _v2.d;
+							return meta;
+						},
+						A2($author$project$Main$findNode, nodename, viz.nodes));
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								state: $author$project$Main$Viz(
+									_Utils_update(
+										viz,
+										{activeMetadata: metadata}))
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						model,
+						$author$project$Main$getTreeData(treename));
+				}
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{state: $author$project$Main$Home}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$init = F3(
@@ -6487,9 +6568,6 @@ var $author$project$Main$init = F3(
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Main$Viz = function (a) {
-	return {$: 'Viz', a: a};
-};
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$core$Result$map = F2(
 	function (func, ra) {
@@ -6501,10 +6579,6 @@ var $elm$core$Result$map = F2(
 			var e = ra.a;
 			return $elm$core$Result$Err(e);
 		}
-	});
-var $author$project$Tree$TreeNode = F5(
-	function (a, b, c, d, e) {
-		return {$: 'TreeNode', a: a, b: b, c: c, d: d, e: e};
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -6677,11 +6751,6 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{url: url}));
-			case 'LoadData':
-				var name = msg.a;
-				return _Utils_Tuple2(
-					model,
-					$author$project$Main$getTreeData(name));
 			case 'GotTree':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
@@ -6689,14 +6758,31 @@ var $author$project$Main$update = F2(
 					var _v3 = $author$project$Tree$decodeTreeString(data);
 					if (_v3.$ === 'Ok') {
 						var nodeList = _v3.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									state: $author$project$Main$Viz(
-										{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization'})
-								}),
-							$elm$core$Platform$Cmd$none);
+						var _v4 = $author$project$Route$parseUrl(model.url);
+						switch (_v4.$) {
+							case 'Tree':
+								var name = _v4.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											state: $author$project$Main$Viz(
+												{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization', treename: name})
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 'Node':
+								var name = _v4.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											state: $author$project$Main$Viz(
+												{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization', treename: name})
+										}),
+									A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/tree/' + name));
+							default:
+								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
 					} else {
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -6712,33 +6798,32 @@ var $author$project$Main$update = F2(
 						$elm$core$Platform$Cmd$none);
 				}
 			default:
-				var _v4 = msg.a;
-				var maybeMetadata = _v4.d;
-				var _v5 = model.state;
-				if (_v5.$ === 'Viz') {
-					var viz = _v5.a;
+				var node = msg.a;
+				var id = node.a;
+				var _v6 = model.state;
+				if (_v6.$ === 'Viz') {
+					var viz = _v6.a;
 					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								state: $author$project$Main$Viz(
-									_Utils_update(
-										viz,
-										{activeMetadata: maybeMetadata}))
-							}),
-						$elm$core$Platform$Cmd$none);
+						model,
+						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/tree/' + (viz.treename + ('/node/' + id))));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 		}
 	});
-var $author$project$Main$LoadData = function (a) {
-	return {$: 'LoadData', a: a};
-};
 var $author$project$Main$SelectNode = function (a) {
 	return {$: 'SelectNode', a: a};
 };
-var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -6952,18 +7037,11 @@ var $author$project$VisualTree$draw = F2(
 	});
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
+var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
 };
 var $elm$html$Html$b = _VirtualDom_node('b');
 var $elm$html$Html$li = _VirtualDom_node('li');
@@ -7014,27 +7092,30 @@ var $author$project$Main$contentView = function (state) {
 	if (state.$ === 'Home') {
 		return A2(
 			$elm$html$Html$div,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('buttons')
+				]),
 			_List_fromArray(
 				[
 					$elm$html$Html$text('Home: '),
 					A2(
-					$elm$html$Html$button,
+					$elm$html$Html$a,
 					_List_fromArray(
 						[
-							$elm$html$Html$Events$onClick(
-							$author$project$Main$LoadData('primates'))
+							$elm$html$Html$Attributes$href('/tree/primates'),
+							$elm$html$Html$Attributes$class('button is-info')
 						]),
 					_List_fromArray(
 						[
 							$elm$html$Html$text('Load sample (primates)')
 						])),
 					A2(
-					$elm$html$Html$button,
+					$elm$html$Html$a,
 					_List_fromArray(
 						[
-							$elm$html$Html$Events$onClick(
-							$author$project$Main$LoadData('felidae'))
+							$elm$html$Html$Attributes$href('/tree/felidae'),
+							$elm$html$Html$Attributes$class('button is-info')
 						]),
 					_List_fromArray(
 						[
@@ -7096,21 +7177,6 @@ var $author$project$Main$footerView = A2(
 		[
 			$elm$html$Html$text('lfb241 & cactusiusss')
 		]));
-var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
 var $author$project$Main$headerView = A2(
 	$elm$html$Html$div,
 	_List_Nil,

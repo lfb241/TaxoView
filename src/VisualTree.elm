@@ -7,7 +7,7 @@ import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Core exposing (attribute)
 import TypedSvg.Events exposing (onClick)
 
-
+-- Methode macht aus TreeNode-Liste ein HTML-Objekt
 draw : (TreeNode -> msg) -> Maybe (List TreeNode) -> Html msg
 draw onSelect maybeTree =
     case maybeTree of
@@ -26,7 +26,7 @@ draw onSelect maybeTree =
                     roots
                 )
 
-
+-- Hilfsmethode zur SVG-Generierung TODO: add comments
 renderTree : (TreeNode -> msg) -> TreeNode -> Float -> Float -> Int -> Html msg
 renderTree onSelect node xPos yPos level =
     let
@@ -35,6 +35,7 @@ renderTree onSelect node xPos yPos level =
                 TreeNode _ nodeLabel nodeRank _ nodeChildren ->
                     ( nodeLabel, nodeRank, nodeChildren )
 
+        -- TODO: hier fehlen noch Farben für Rank = order, suborder, infraorder
         nodeColor =
             case String.toLower rank of
                 "family" ->

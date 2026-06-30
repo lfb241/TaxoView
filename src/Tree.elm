@@ -1,16 +1,18 @@
-module Tree exposing (TreeNode(..), decodeTreeString, toString)
+module Tree exposing (TreeNode(..), decodeTreeString)
 import Metadata exposing(Metadata(..))
 import String exposing (repeat)
 import Json.Decode --for .decodeString and .Error
 import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
+{-
+TODO:
+- Metadata-Decoder in Metadata.elm?
+-}
+
 --- id, label, rank, metadata, children
 type TreeNode =
   TreeNode String String String (Maybe (List Metadata)) (Maybe (List TreeNode))
 
-
--- TODO: Handle decoding
--- decodeTreeString : String -> Result Json.Decode.Error (List(TreeNode))
 
 --Decoder for metadata
 metadataDecoder : Decoder (Maybe (List Metadata))
@@ -42,54 +44,9 @@ treeDecoder =
         -- lazy vermeidet unendliche Rekursion
         (maybe (field "children" (list (lazy (\_ -> treeDecoder)))))
         
---aaaaaaaaaaaaaaa
+-- Methode zur Nutzung des Decoders
 decodeTreeString : String -> Result Json.Decode.Error (List TreeNode)
 decodeTreeString jsonString =
     Json.Decode.decodeString treeDecoder jsonString
         -- root to list
         |> Result.map (\node -> [ node ])
-
-
---- Fürs Testen
-
-toString : List TreeNode -> String
-toString nodes =
-    String.join "" (List.map (treeNodeToString 0) nodes)
-
-treeNodeToString : Int -> TreeNode -> String
-treeNodeToString indent (TreeNode id label rank metadata children) =
-    let
-        ind = repeat indent "  "
-        metaStr =
-            case metadata of
-                Nothing ->
-                    ""
-
-                Just ms ->
-                    " [" ++ (String.join ", " (List.map metadataToString ms)) ++ "]"
-
-        header =
-            ind ++ label ++ " (" ++ rank ++ ") - " ++ id ++ metaStr ++ "\n"
-
-        childrenStr =
-            case children of
-                Nothing ->
-                    ""
-
-                Just cs ->
-                    String.join "" (List.map (treeNodeToString (indent + 1)) cs)
-    in
-    header ++ childrenStr
-
-
-metadataToString : Metadata -> String
-metadataToString meta =
-    case meta of
-        ScientificName s ->
-            "scientific: " ++ s
-
-        CommonName s ->
-            "common: " ++ s
-
-        Description s ->
-            "desc: " ++ s

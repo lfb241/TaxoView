@@ -11,7 +11,27 @@ import Route exposing (Route(..), parseUrl)
 import Tree exposing (TreeNode(..), decodeTreeString)
 import Url
 import VisualTree
+import List
+import Html.Attributes exposing (class)
+import Url.Parser exposing (parse)
 
+{-
+TODO: 
+- Layout definieren
+- headerView
+- footerView
+- contentView
+- metadataView als "Card" über pressed Note
+- Suchfeld implementieren 
+
+DONE:
+- LoadData durch korrektes LinkClicked ersetzen, sodass auch URL sich ändert (bei Tree und Nodeclicked)
+-}
+
+{-
+Erweiterungsmöglichkeiten:
+- Error Messages bei HTTP-Request anstatt einfach auf Homepage zu bleiben
+-}
 
 main : Program () Model Msg
 main =
@@ -24,6 +44,15 @@ main =
         , onUrlRequest = LinkClicked
         }
 
+-- State beschreibt aktuelle Page
+type State
+    = Home
+    | Viz
+        { title : String
+        , treename: String
+        , nodes : List TreeNode
+        , activeMetadata : Maybe (List Metadata)
+        }
 
 type alias Model =
     { key : Nav.Key
@@ -31,16 +60,7 @@ type alias Model =
     , state : State
     }
 
-
-type State
-    = Home
-    | Viz
-        { title : String
-        , nodes : List TreeNode
-        , activeMetadata : Maybe (List Metadata)
-        }
-
-
+-- Initialisierung mit Homepage
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
     let
@@ -52,13 +72,29 @@ init _ url key =
     in
     loadFromUrl url model
 
-
+-- Funktion um je nach Url die richtige Seite
+-- mit den richtigen HTTP-Requests zu laden
 loadFromUrl : Url.Url -> Model -> ( Model, Cmd Msg )
 loadFromUrl url model =
     case parseUrl url of
         Tree name ->
             ( model, getTreeData name )
 
+        Node treename nodename ->
+            case model.state of
+                Viz viz ->
+                    let
+                        metadata =
+                            viz.nodes
+                                |> findNode nodename
+                                |> Maybe.andThen (\(TreeNode _ _ _ meta _) -> meta)
+                    in
+                    ( { model | state = Viz { viz | activeMetadata = metadata } }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( model, getTreeData treename )
         _ ->
             ( { model | state = Home }, Cmd.none )
 
@@ -66,7 +102,6 @@ loadFromUrl url model =
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
-    | LoadData String
     | GotTree (Result Http.Error String)
     | SelectNode TreeNode
 
@@ -85,24 +120,41 @@ update msg model =
         UrlChanged url ->
             loadFromUrl url { model | url = url }
 
-        LoadData name ->
-            ( model, getTreeData name )
 
         GotTree result ->
             case result of
                 Ok data ->
                     case decodeTreeString data of
+
                         Ok nodeList ->
-                            ( { model
-                                | state =
-                                    Viz
-                                        { title = "Visualization"
-                                        , nodes = nodeList
-                                        , activeMetadata = Nothing
+                            case parseUrl model.url of
+                                Tree name ->
+                                    ( { model
+                                    | state =
+                                        Viz
+                                            { title = "Visualization"
+                                            , treename = name
+                                            , nodes = nodeList
+                                            , activeMetadata = Nothing
+                                            }
                                         }
-                              }
-                            , Cmd.none
-                            )
+                                        , Cmd.none
+                                    )
+
+                                Node name _ ->
+                                    ({model
+                                    | state =
+                                        Viz
+                                            { title = "Visualization"
+                                            , treename = name
+                                            , nodes = nodeList
+                                            , activeMetadata = Nothing
+                                            }
+                                        }
+                                        , Nav.pushUrl model.key ("/tree/" ++ name)
+                                    )
+                                _ ->
+                                    (model, Cmd.none)
 
                         Err _ ->
                             ( { model | state = Home }, Cmd.none )
@@ -110,20 +162,22 @@ update msg model =
                 Err _ ->
                     ( { model | state = Home }, Cmd.none )
 
-        SelectNode (TreeNode _ _ _ maybeMetadata _) ->
-            case model.state of
-                Viz viz ->
-                    ( { model
-                        | state =
-                            Viz { viz | activeMetadata = maybeMetadata }
-                      }
-                    , Cmd.none
-                    )
 
-                Home ->
-                    ( model, Cmd.none )
+        SelectNode node ->
+          case node of
+                TreeNode id _ _ _ _ ->
+                    case model.state of 
+                        Viz viz ->
+
+                            ( model
+                            , Nav.pushUrl model.key ("/tree/" ++ viz.treename ++ "/node/" ++ id)
+                            )
+                        _ ->
+                            (model, Cmd.none)
 
 
+-- Je nach Backend muss diese Funktion angepasst werden
+-- in unserem Fall laden wir Beispieldaten die auf dem Frontend-Server liegen
 getTreeData : String -> Cmd Msg
 getTreeData name =
     Http.get
@@ -131,7 +185,7 @@ getTreeData name =
         , expect = Http.expectString GotTree
         }
 
-
+-- Hier wird alles zusammengebaut
 view : Model -> Browser.Document Msg
 view model =
     { title = "TaxoView"
@@ -154,15 +208,15 @@ footerView : Html Msg
 footerView =
     div [] [ text "lfb241 & cactusiusss" ]
 
-
+-- dynamische view-Funktion rendert je nach State den Inhalt
 contentView : State -> Html Msg
 contentView state =
     case state of
         Home ->
-            div []
+            div [class "buttons"]
                 [ text "Home: "
-                , button [ onClick (LoadData "primates") ] [ text "Load sample (primates)" ]
-                , button [ onClick (LoadData "felidae") ] [ text "Load sample (felidae)" ]
+                , a [ href "/tree/primates", class "button is-info" ] [ text "Load sample (primates)" ]
+                , a [ href "/tree/felidae", class "button is-info" ] [ text "Load sample (felidae)" ]
                 ]
 
         Viz viz ->
@@ -178,7 +232,7 @@ contentView state =
                     ]
                 ]
 
-
+-- Hilfs-View-Funktion zur Anzeige von Metadaten
 viewMetadata : Maybe (List Metadata) -> Html Msg
 viewMetadata maybeMetadata =
     case maybeMetadata of
@@ -197,3 +251,23 @@ viewMetadata maybeMetadata =
                     )
                     metadataList
                 )
+
+-- rekursive Methode um im Baum den Knoten mit der richtigen ID zu finden
+findNode : String -> List TreeNode -> Maybe TreeNode
+findNode targetId nodes =
+    -- Abbruchbedingung
+    case nodes of
+        [] ->
+            Nothing
+        -- Dekonstruierung der Liste
+        (TreeNode id label rank meta children) :: rest ->
+            if id == targetId then
+                -- Wenn Kopf der Liste der gesuchte Knoten ist
+                Just (TreeNode id label rank meta children)
+            else
+                -- weitersuchen in Children-Knoten
+                case Maybe.andThen (findNode targetId) children of
+                    Just found ->
+                        Just found
+                    Nothing ->
+                        findNode targetId rest
