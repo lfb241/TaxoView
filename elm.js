@@ -7033,6 +7033,10 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$strong = _VirtualDom_node('strong');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $author$project$Main$viewMetadata = function (maybeMetadata) {
 	if (maybeMetadata.$ === 'Nothing') {
@@ -7052,43 +7056,64 @@ var $author$project$Main$contentView = function (state) {
 	if (state.$ === 'Home') {
 		return A2(
 			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('buttons')
-				]),
+			_List_Nil,
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$a,
+					$elm$html$Html$input,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$href('/TaxoView/')
+							$elm$html$Html$Attributes$class('input is-link'),
+							$elm$html$Html$Attributes$type_('text'),
+							$elm$html$Html$Attributes$placeholder('Suche in Datenbank nach biologischen Entitäten...')
 						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Home: ')
-						])),
+					_List_Nil),
 					A2(
-					$elm$html$Html$a,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$href('/TaxoView/tree/primates'),
-							$elm$html$Html$Attributes$class('button is-info')
+							$elm$html$Html$Attributes$class('container')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Load sample (primates)')
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$href('/TaxoView/tree/felidae'),
-							$elm$html$Html$Attributes$class('button is-info')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Load sample (felidae)')
+							A2(
+							$elm$html$Html$strong,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Verfügbare Beispieldaten:')
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('buttons')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$href('/TaxoView/tree/primates'),
+											$elm$html$Html$Attributes$class('button is-info')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Primaten')
+										])),
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$href('/TaxoView/tree/felidae'),
+											$elm$html$Html$Attributes$class('button is-info')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Felidae')
+										]))
+								]))
 						]))
 				]));
 	} else {

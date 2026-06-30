@@ -2,31 +2,31 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, b, button, div, h2, h3, li, p, text, ul)
-import Html.Attributes exposing (href)
+import Html exposing (Html, a, b, button, div, footer, h2, h3, input, li, p, section, text, ul)
+import Html.Attributes exposing (class, href, id, placeholder, type_)
 import Html.Events exposing (onClick)
 import Http
 import Route exposing (Route(..), parseUrl)
-import Tree exposing (Metadata(..),metadataToList,TreeNode(..), decodeTreeString)
+import Tree exposing (Metadata(..), TreeNode(..), decodeTreeString, metadataToList)
 import Url
 import VisualTree
-import Html.Attributes exposing (class)
-import Html exposing (footer)
-import Html exposing (section)
-import Html.Attributes exposing (id)
+import Html exposing (strong)
+
+
 
 {-
-TODO: 
-- Layout definieren
-- headerView
-- footerView
-- contentView
-- metadataView als "Card" über pressed Note
-- Suchfeld implementieren 
+   TODO:
+   - Layout definieren
+   - headerView
+   - footerView
+   - contentView
+   - metadataView als "Card" über pressed Note
+   - Suchfeld implementieren
 
-DONE:
-- LoadData durch korrektes LinkClicked ersetzen, sodass auch URL sich ändert (bei Tree und Nodeclicked)
+   DONE:
+   - LoadData durch korrektes LinkClicked ersetzen, sodass auch URL sich ändert (bei Tree und Nodeclicked)
 -}
+
 
 main : Program () Model Msg
 main =
@@ -39,15 +39,20 @@ main =
         , onUrlRequest = LinkClicked
         }
 
+
+
 -- State beschreibt aktuelle Page
+
+
 type State
     = Home
     | Viz
         { title : String
-        , treename: String
+        , treename : String
         , nodes : List TreeNode
         , activeMetadata : Maybe (List Metadata)
         }
+
 
 type alias Model =
     { key : Nav.Key
@@ -55,7 +60,11 @@ type alias Model =
     , state : State
     }
 
+
+
 -- Initialisierung mit Homepage
+
+
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
     let
@@ -67,8 +76,12 @@ init _ url key =
     in
     loadFromUrl url model
 
+
+
 -- Funktion um je nach Url die richtige Seite
 -- mit den richtigen HTTP-Requests zu laden
+
+
 loadFromUrl : Url.Url -> Model -> ( Model, Cmd Msg )
 loadFromUrl url model =
     case parseUrl url of
@@ -87,12 +100,16 @@ loadFromUrl url model =
                     ( { model | state = Viz { viz | activeMetadata = metadata } }
                     , Cmd.none
                     )
+
                 {- Geht nicht weil SPA
-                wenn eine node-url geladen wird ohne dass wir vorher einen Baum geladen haben
-                -- soll erstmal nur der korrespondierende Baum geladen werden  
+                   wenn eine node-url geladen wird ohne dass wir vorher einen Baum geladen haben
+                   -- soll erstmal nur der korrespondierende Baum geladen werden
+                   _ ->
+                       ( model, getTreeData treename )
+                -}
                 _ ->
-                    ( model, getTreeData treename )-}
-                _ -> (model, Cmd.none)
+                    ( model, Cmd.none )
+
         _ ->
             ( { model | state = Home }, Cmd.none )
 
@@ -118,44 +135,44 @@ update msg model =
         UrlChanged url ->
             loadFromUrl url { model | url = url }
 
-
         GotTree result ->
             case result of
                 Ok data ->
                     case decodeTreeString data of
-
                         Ok nodeList ->
                             case parseUrl model.url of
                                 -- wenn wir von einer tree anfrage kommen
                                 Tree name ->
                                     ( { model
-                                    | state =
-                                        Viz
-                                            { title = "Visualization"
-                                            , treename = name
-                                            , nodes = nodeList
-                                            , activeMetadata = Nothing
-                                            }
-                                        }
-                                        , Cmd.none
+                                        | state =
+                                            Viz
+                                                { title = "Visualization"
+                                                , treename = name
+                                                , nodes = nodeList
+                                                , activeMetadata = Nothing
+                                                }
+                                      }
+                                    , Cmd.none
                                     )
-                                {- IRRELEVANT, da das bei unserer SPA eh nicht geht 
-                                wenn wir eine node anfrage tätigen, obwohl tree noch nicht geladen
-                                Node name _ ->
-                                    ({model
-                                    | state =
-                                        Viz
-                                            { title = "Visualization"
-                                            , treename = name
-                                            , nodes = nodeList
-                                            , activeMetadata = Nothing
-                                            }
-                                        }
-                                        --- url korrekt setzen
-                                        , Nav.pushUrl model.key ("/TaxoView/tree/" ++ name)
-                                    ) -}
+
+                                {- IRRELEVANT, da das bei unserer SPA eh nicht geht
+                                   wenn wir eine node anfrage tätigen, obwohl tree noch nicht geladen
+                                   Node name _ ->
+                                       ({model
+                                       | state =
+                                           Viz
+                                               { title = "Visualization"
+                                               , treename = name
+                                               , nodes = nodeList
+                                               , activeMetadata = Nothing
+                                               }
+                                           }
+                                           --- url korrekt setzen
+                                           , Nav.pushUrl model.key ("/TaxoView/tree/" ++ name)
+                                       )
+                                -}
                                 _ ->
-                                    (model, Cmd.none)
+                                    ( model, Cmd.none )
 
                         Err _ ->
                             ( { model | state = Home }, Cmd.none )
@@ -163,40 +180,49 @@ update msg model =
                 Err _ ->
                     ( { model | state = Home }, Cmd.none )
 
-
         SelectNode node ->
-          case node of
+            case node of
                 TreeNode id _ _ _ _ ->
-                    case model.state of 
+                    case model.state of
                         Viz viz ->
-
                             ( model
                             , Nav.pushUrl model.key ("/TaxoView/tree/" ++ viz.treename ++ "/node/" ++ id)
                             )
+
                         _ ->
-                            (model, Cmd.none)
+                            ( model, Cmd.none )
+
 
 
 -- Je nach Backend muss diese Funktion angepasst werden
 -- in unserem Fall laden wir Beispieldaten die auf dem Frontend-Server liegen
+
+
 getTreeData : String -> Cmd Msg
 getTreeData name =
     Http.get
-        { url = "/TaxoView/data/" ++ name ++ ".json" 
+        { url = "/TaxoView/data/" ++ name ++ ".json"
+
         -- TODO: ändern für productive
         --url = "/docs/data" ++ name ++ ".json"
         , expect = Http.expectString GotTree
         }
 
+
+
 -- Hier wird alles zusammengebaut
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "TaxoView"
     , body =
-        [ div[][headerView
-        , section [class "section content-section"] [div [class "container"][contentView model.state]]
-        , footerView
-        ]]
+        [ div []
+            [ headerView
+            , section [ class "section content-section" ] [ div [ class "container" ] [ contentView model.state ] ]
+            , footerView
+            ]
+        ]
     }
 
 
@@ -211,29 +237,38 @@ headerView =
                         [ text "Visualisierung phylogenetischer Stammbäume" ]
                     ]
                 ]
-            ]]
+            ]
+        ]
+
 
 footerView : Html Msg
 footerView =
     footer [ class "footer" ]
-        [ div [class "container"]
+        [ div [ class "container" ]
             [ text "Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova"
             ]
-        , div [class "container"]
+        , div [ class "container" ]
             [ a [ href "https://github.com/lfb241/TaxoView" ]
                 [ text "Github-Code" ]
             ]
         ]
 
+
+
 -- dynamische view-Funktion rendert je nach State den Inhalt
+
+
 contentView : State -> Html Msg
 contentView state =
     case state of
         Home ->
-            div [class "buttons"]
-                [ a [href "/TaxoView/"] [text "Home: "]
-                , a [ href "/TaxoView/tree/primates", class "button is-info" ] [ text "Load sample (primates)" ]
-                , a [ href "/TaxoView/tree/felidae", class "button is-info" ] [ text "Load sample (felidae)" ]
+            div []
+                [ input [ class "input is-link", type_ "text", placeholder "Suche in Datenbank nach biologischen Entitäten..." ] []
+                , div [ class "container" ]
+                    
+                    [strong[] [text "Verfügbare Beispieldaten:"], div[class "buttons"] [a [ href "/TaxoView/tree/primates", class "button is-info" ] [ text "Primaten" ]
+                    , a [ href "/TaxoView/tree/felidae", class "button is-info" ] [ text "Felidae" ]
+                    ]]
                 ]
 
         Viz viz ->
@@ -249,7 +284,11 @@ contentView state =
                     ]
                 ]
 
+
+
 -- Hilfs-View-Funktion zur Anzeige von Metadaten
+
+
 viewMetadata : Maybe (List Metadata) -> Html Msg
 viewMetadata maybeMetadata =
     case maybeMetadata of
@@ -259,22 +298,29 @@ viewMetadata maybeMetadata =
         Just metadataList ->
             text "testtestetst"
 
+
+
 -- rekursive Methode um im Baum den Knoten mit der richtigen ID zu finden
+
+
 findNode : String -> List TreeNode -> Maybe TreeNode
 findNode targetId nodes =
     -- Abbruchbedingung
     case nodes of
         [] ->
             Nothing
+
         -- Dekonstruierung der Liste
         (TreeNode id label rank meta children) :: rest ->
             if id == targetId then
                 -- Wenn Kopf der Liste der gesuchte Knoten ist
                 Just (TreeNode id label rank meta children)
+
             else
                 -- weitersuchen in Children-Knoten
                 case Maybe.andThen (findNode targetId) children of
                     Just found ->
                         Just found
+
                     Nothing ->
                         findNode targetId rest
