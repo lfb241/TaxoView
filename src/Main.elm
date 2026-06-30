@@ -10,7 +10,6 @@ import Route exposing (Route(..), parseUrl)
 import Tree exposing (Metadata(..),metadataToList,TreeNode(..), decodeTreeString)
 import Url
 import VisualTree
-import List
 import Html.Attributes exposing (class)
 import Html exposing (footer)
 import Html exposing (section)
@@ -27,11 +26,6 @@ TODO:
 
 DONE:
 - LoadData durch korrektes LinkClicked ersetzen, sodass auch URL sich ändert (bei Tree und Nodeclicked)
--}
-
-{-
-Erweiterungsmöglichkeiten:
-- Error Messages bei HTTP-Request anstatt einfach auf Homepage zu bleiben
 -}
 
 main : Program () Model Msg
@@ -93,10 +87,12 @@ loadFromUrl url model =
                     ( { model | state = Viz { viz | activeMetadata = metadata } }
                     , Cmd.none
                     )
-                -- wenn eine node-url geladen wird ohne dass wir vorher einen Baum geladen haben
+                {- Geht nicht weil SPA
+                wenn eine node-url geladen wird ohne dass wir vorher einen Baum geladen haben
                 -- soll erstmal nur der korrespondierende Baum geladen werden  
                 _ ->
-                    ( model, getTreeData treename )
+                    ( model, getTreeData treename )-}
+                _ -> (model, Cmd.none)
         _ ->
             ( { model | state = Home }, Cmd.none )
 
@@ -143,7 +139,8 @@ update msg model =
                                         }
                                         , Cmd.none
                                     )
-                                --- wenn wir eine node anfrage tätigen, obwohl tree noch nicht geladen
+                                {- IRRELEVANT, da das bei unserer SPA eh nicht geht 
+                                wenn wir eine node anfrage tätigen, obwohl tree noch nicht geladen
                                 Node name _ ->
                                     ({model
                                     | state =
@@ -156,7 +153,7 @@ update msg model =
                                         }
                                         --- url korrekt setzen
                                         , Nav.pushUrl model.key ("/TaxoView/tree/" ++ name)
-                                    )
+                                    ) -}
                                 _ ->
                                     (model, Cmd.none)
 
@@ -185,7 +182,9 @@ update msg model =
 getTreeData : String -> Cmd Msg
 getTreeData name =
     Http.get
-        { url = "/data/" ++ name ++ ".json" -- TODO: ändern für productive
+        { url = "/data/" ++ name ++ ".json" 
+        -- TODO: ändern für productive
+        --url = "/docs/data" ++ name ++ ".json"
         , expect = Http.expectString GotTree
         }
 
