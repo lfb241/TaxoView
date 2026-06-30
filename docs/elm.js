@@ -6811,10 +6811,6 @@ var $author$project$Main$update = F2(
 				}
 		}
 	});
-var $author$project$Main$SelectNode = function (a) {
-	return {$: 'SelectNode', a: a};
-};
-var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6824,6 +6820,10 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $author$project$Main$SelectNode = function (a) {
+	return {$: 'SelectNode', a: a};
+};
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -7170,36 +7170,130 @@ var $author$project$Main$contentView = function (state) {
 				]));
 	}
 };
+var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $author$project$Main$footerView = A2(
-	$elm$html$Html$div,
-	_List_Nil,
+	$elm$html$Html$footer,
 	_List_fromArray(
 		[
-			$elm$html$Html$text('lfb241 & cactusiusss')
+			$elm$html$Html$Attributes$class('footer')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova')
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('https://github.com/lfb241/TaxoView')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Github-Code')
+						]))
+				]))
 		]));
+var $elm$html$Html$section = _VirtualDom_node('section');
 var $author$project$Main$headerView = A2(
 	$elm$html$Html$div,
 	_List_Nil,
 	_List_fromArray(
 		[
 			A2(
-			$elm$html$Html$a,
+			$elm$html$Html$section,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$href('/')
+					$elm$html$Html$Attributes$class('hero is-link')
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text('Back to Home')
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('hero-body py-4')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('container')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$p,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('title')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('TaxoView')
+										])),
+									A2(
+									$elm$html$Html$p,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('subtitle')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Visualisierung phylogenetischer Stammbäume')
+										]))
+								]))
+						]))
 				]))
 		]));
 var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				$author$project$Main$headerView,
-				$author$project$Main$contentView(model.state),
-				$author$project$Main$footerView
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$author$project$Main$headerView,
+						A2(
+						$elm$html$Html$section,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('section content-section')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('container')
+									]),
+								_List_fromArray(
+									[
+										$author$project$Main$contentView(model.state)
+									]))
+							])),
+						$author$project$Main$footerView
+					]))
 			]),
 		title: 'TaxoView'
 	};

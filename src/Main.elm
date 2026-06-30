@@ -14,6 +14,11 @@ import VisualTree
 import List
 import Html.Attributes exposing (class)
 import Url.Parser exposing (parse)
+import Html exposing (header)
+import Html exposing (footer)
+import Html exposing (section)
+import Html exposing (nav)
+import Html.Attributes exposing (id)
 
 {-
 TODO: 
@@ -190,23 +195,37 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "TaxoView"
     , body =
-        [ headerView
-        , contentView model.state
+        [ div[][headerView
+        , section [class "section content-section"] [div [class "container"][contentView model.state]]
         , footerView
-        ]
+        ]]
     }
 
 
 headerView : Html Msg
 headerView =
     div []
-        [ a [ href "/" ] [ text "Back to Home" ]
-        ]
-
+        [ section [ class "hero is-link" ]
+            [ div [ class "hero-body py-4" ]
+                [ div [ class "container" ]
+                    [ p [ class "title" ] [ text "TaxoView" ]
+                    , p [ class "subtitle" ]
+                        [ text "Visualisierung phylogenetischer Stammbäume" ]
+                    ]
+                ]
+            ]]
 
 footerView : Html Msg
 footerView =
-    div [] [ text "lfb241 & cactusiusss" ]
+    footer [ class "footer" ]
+        [ div [class "container"]
+            [ text "Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova"
+            ]
+        , div [class "container"]
+            [ a [ href "https://github.com/lfb241/TaxoView" ]
+                [ text "Github-Code" ]
+            ]
+        ]
 
 -- dynamische view-Funktion rendert je nach State den Inhalt
 contentView : State -> Html Msg
