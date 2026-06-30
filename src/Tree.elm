@@ -1,18 +1,29 @@
-module Tree exposing (TreeNode(..), decodeTreeString)
-import Metadata exposing(Metadata(..))
-import String exposing (repeat)
-import Json.Decode --for .decodeString and .Error
+module Tree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToList)
 import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
-{-
-TODO:
-- Metadata-Decoder in Metadata.elm?
--}
 
---- id, label, rank, metadata, children
+-- Typ für Metadata, kann bei Bedarf erweitert werden
+type Metadata =
+  ScientificName String
+  | Description String
+  | CommonName String
+
+
+
+--- Typ für Baumknoten: id, label, rank, metadata, children
 type TreeNode =
   TreeNode String String String (Maybe (List Metadata)) (Maybe (List TreeNode))
 
+
+{-
+TODO:
+- mehr Metadaten einbauen?
+- Methode metadataToList implementieren
+-}
+
+-- soll Metadaten als key-value-pair anzeigen
+metadataToList: List(Metadata) -> List(String, String)
+metadataToList metadata = [("Test","Test")]
 
 --Decoder for metadata
 metadataDecoder : Decoder (Maybe (List Metadata))

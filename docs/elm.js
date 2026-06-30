@@ -6204,12 +6204,12 @@ var $author$project$Main$getTreeData = function (name) {
 	return $elm$http$Http$get(
 		{
 			expect: $elm$http$Http$expectString($author$project$Main$GotTree),
-			url: '/TaxoView/data/' + (name + '.json')
+			url: '/docs/data/' + (name + '.json')
 		});
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Route$Top = {$: 'Top'};
+var $author$project$Route$Home = {$: 'Home'};
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
 		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
@@ -6476,31 +6476,34 @@ var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 		return _List_fromArray(
 			[state]);
 	});
-var $author$project$Route$routeParser = $elm$url$Url$Parser$oneOf(
-	_List_fromArray(
-		[
-			A2(
-			$elm$url$Url$Parser$map,
-			$author$project$Route$Node,
-			A2(
-				$elm$url$Url$Parser$slash,
-				$elm$url$Url$Parser$s('tree'),
+var $author$project$Route$routeParser = A2(
+	$elm$url$Url$Parser$slash,
+	$elm$url$Url$Parser$s('TaxoView'),
+	$elm$url$Url$Parser$oneOf(
+		_List_fromArray(
+			[
+				A2(
+				$elm$url$Url$Parser$map,
+				$author$project$Route$Node,
 				A2(
 					$elm$url$Url$Parser$slash,
-					$elm$url$Url$Parser$string,
+					$elm$url$Url$Parser$s('tree'),
 					A2(
 						$elm$url$Url$Parser$slash,
-						$elm$url$Url$Parser$s('node'),
-						$elm$url$Url$Parser$string)))),
-			A2(
-			$elm$url$Url$Parser$map,
-			$author$project$Route$Tree,
-			A2(
-				$elm$url$Url$Parser$slash,
-				$elm$url$Url$Parser$s('tree'),
-				$elm$url$Url$Parser$string)),
-			A2($elm$url$Url$Parser$map, $author$project$Route$Top, $elm$url$Url$Parser$top)
-		]));
+						$elm$url$Url$Parser$string,
+						A2(
+							$elm$url$Url$Parser$slash,
+							$elm$url$Url$Parser$s('node'),
+							$elm$url$Url$Parser$string)))),
+				A2(
+				$elm$url$Url$Parser$map,
+				$author$project$Route$Tree,
+				A2(
+					$elm$url$Url$Parser$slash,
+					$elm$url$Url$Parser$s('tree'),
+					$elm$url$Url$Parser$string)),
+				A2($elm$url$Url$Parser$map, $author$project$Route$Home, $elm$url$Url$Parser$top)
+			])));
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6513,7 +6516,7 @@ var $elm$core$Maybe$withDefault = F2(
 var $author$project$Route$parseUrl = function (url) {
 	return A2(
 		$elm$core$Maybe$withDefault,
-		$author$project$Route$Top,
+		$author$project$Route$Home,
 		A2($elm$url$Url$Parser$parse, $author$project$Route$routeParser, url));
 };
 var $author$project$Main$loadFromUrl = F2(
@@ -6599,13 +6602,13 @@ var $elm$json$Json$Decode$maybe = function (decoder) {
 				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
 			]));
 };
-var $author$project$Metadata$CommonName = function (a) {
+var $author$project$Tree$CommonName = function (a) {
 	return {$: 'CommonName', a: a};
 };
-var $author$project$Metadata$Description = function (a) {
+var $author$project$Tree$Description = function (a) {
 	return {$: 'Description', a: a};
 };
-var $author$project$Metadata$ScientificName = function (a) {
+var $author$project$Tree$ScientificName = function (a) {
 	return {$: 'ScientificName', a: a};
 };
 var $elm$core$Maybe$map = F2(
@@ -6633,9 +6636,9 @@ var $author$project$Tree$metadataDecoder = $elm$json$Json$Decode$maybe(
 						$elm$core$Basics$identity,
 						_List_fromArray(
 							[
-								A2($elm$core$Maybe$map, $author$project$Metadata$ScientificName, sci),
-								A2($elm$core$Maybe$map, $author$project$Metadata$CommonName, common),
-								A2($elm$core$Maybe$map, $author$project$Metadata$Description, desc)
+								A2($elm$core$Maybe$map, $author$project$Tree$ScientificName, sci),
+								A2($elm$core$Maybe$map, $author$project$Tree$CommonName, common),
+								A2($elm$core$Maybe$map, $author$project$Tree$Description, desc)
 							]));
 				}),
 			$elm$json$Json$Decode$maybe(
@@ -6779,7 +6782,7 @@ var $author$project$Main$update = F2(
 											state: $author$project$Main$Viz(
 												{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization', treename: name})
 										}),
-									A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/tree/' + name));
+									A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/tree/' + name));
 							default:
 								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -6805,7 +6808,7 @@ var $author$project$Main$update = F2(
 					var viz = _v6.a;
 					return _Utils_Tuple2(
 						model,
-						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/tree/' + (viz.treename + ('/node/' + id))));
+						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/tree/' + (viz.treename + ('/node/' + id))));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -7043,13 +7046,7 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var $elm$html$Html$b = _VirtualDom_node('b');
-var $elm$html$Html$li = _VirtualDom_node('li');
 var $elm$html$Html$p = _VirtualDom_node('p');
-var $author$project$Metadata$toPair = function (metadata) {
-	return _Utils_Tuple2('Test', 'Test');
-};
-var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Main$viewMetadata = function (maybeMetadata) {
 	if (maybeMetadata.$ === 'Nothing') {
 		return A2(
@@ -7061,31 +7058,7 @@ var $author$project$Main$viewMetadata = function (maybeMetadata) {
 				]));
 	} else {
 		var metadataList = maybeMetadata.a;
-		return A2(
-			$elm$html$Html$ul,
-			_List_Nil,
-			A2(
-				$elm$core$List$map,
-				function (meta) {
-					var _v1 = $author$project$Metadata$toPair(meta);
-					var title = _v1.a;
-					var value = _v1.b;
-					return A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$b,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(title + ': ')
-									])),
-								$elm$html$Html$text(value)
-							]));
-				},
-				metadataList));
+		return $elm$html$Html$text('test');
 	}
 };
 var $author$project$Main$contentView = function (state) {
@@ -7098,12 +7071,21 @@ var $author$project$Main$contentView = function (state) {
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text('Home: '),
 					A2(
 					$elm$html$Html$a,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$href('/tree/primates'),
+							$elm$html$Html$Attributes$href('/TaxoView/')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Home: ')
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href('/TaxoView/tree/primates'),
 							$elm$html$Html$Attributes$class('button is-info')
 						]),
 					_List_fromArray(
@@ -7114,7 +7096,7 @@ var $author$project$Main$contentView = function (state) {
 					$elm$html$Html$a,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$href('/tree/felidae'),
+							$elm$html$Html$Attributes$href('/TaxoView/tree/felidae'),
 							$elm$html$Html$Attributes$class('button is-info')
 						]),
 					_List_fromArray(

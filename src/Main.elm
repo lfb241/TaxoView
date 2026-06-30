@@ -6,18 +6,14 @@ import Html exposing (Html, a, b, button, div, h2, h3, li, p, text, ul)
 import Html.Attributes exposing (href)
 import Html.Events exposing (onClick)
 import Http
-import Metadata exposing (Metadata, toPair)
 import Route exposing (Route(..), parseUrl)
-import Tree exposing (TreeNode(..), decodeTreeString)
+import Tree exposing (Metadata(..),metadataToList,TreeNode(..), decodeTreeString)
 import Url
 import VisualTree
 import List
 import Html.Attributes exposing (class)
-import Url.Parser exposing (parse)
-import Html exposing (header)
 import Html exposing (footer)
 import Html exposing (section)
-import Html exposing (nav)
 import Html.Attributes exposing (id)
 
 {-
@@ -97,7 +93,8 @@ loadFromUrl url model =
                     ( { model | state = Viz { viz | activeMetadata = metadata } }
                     , Cmd.none
                     )
-
+                -- wenn eine node-url geladen wird ohne dass wir vorher einen Baum geladen haben
+                -- soll erstmal nur der korrespondierende Baum geladen werden  
                 _ ->
                     ( model, getTreeData treename )
         _ ->
@@ -133,6 +130,7 @@ update msg model =
 
                         Ok nodeList ->
                             case parseUrl model.url of
+                                -- wenn wir von einer tree anfrage kommen
                                 Tree name ->
                                     ( { model
                                     | state =
@@ -145,7 +143,7 @@ update msg model =
                                         }
                                         , Cmd.none
                                     )
-
+                                --- wenn wir eine node anfrage tätigen, obwohl tree noch nicht geladen
                                 Node name _ ->
                                     ({model
                                     | state =
@@ -156,7 +154,8 @@ update msg model =
                                             , activeMetadata = Nothing
                                             }
                                         }
-                                        , Nav.pushUrl model.key ("/tree/" ++ name)
+                                        --- url korrekt setzen
+                                        , Nav.pushUrl model.key ("/TaxoView/tree/" ++ name)
                                     )
                                 _ ->
                                     (model, Cmd.none)
@@ -175,7 +174,7 @@ update msg model =
                         Viz viz ->
 
                             ( model
-                            , Nav.pushUrl model.key ("/tree/" ++ viz.treename ++ "/node/" ++ id)
+                            , Nav.pushUrl model.key ("/TaxoView/tree/" ++ viz.treename ++ "/node/" ++ id)
                             )
                         _ ->
                             (model, Cmd.none)
@@ -186,7 +185,7 @@ update msg model =
 getTreeData : String -> Cmd Msg
 getTreeData name =
     Http.get
-        { url = "/TaxoView/data/" ++ name ++ ".json"
+        { url = "/data/" ++ name ++ ".json" -- TODO: ändern für productive
         , expect = Http.expectString GotTree
         }
 
@@ -233,9 +232,9 @@ contentView state =
     case state of
         Home ->
             div [class "buttons"]
-                [ text "Home: "
-                , a [ href "/tree/primates", class "button is-info" ] [ text "Load sample (primates)" ]
-                , a [ href "/tree/felidae", class "button is-info" ] [ text "Load sample (felidae)" ]
+                [ a [href "/TaxoView/"] [text "Home: "]
+                , a [ href "/TaxoView/tree/primates", class "button is-info" ] [ text "Load sample (primates)" ]
+                , a [ href "/TaxoView/tree/felidae", class "button is-info" ] [ text "Load sample (felidae)" ]
                 ]
 
         Viz viz ->
@@ -259,17 +258,7 @@ viewMetadata maybeMetadata =
             p [] [ text "Klicken Sie auf einen Knoten, um Details zu sehen." ]
 
         Just metadataList ->
-            ul []
-                (List.map
-                    (\meta ->
-                        let
-                            ( title, value ) =
-                                toPair meta
-                        in
-                        li [] [ b [] [ text (title ++ ": ") ], text value ]
-                    )
-                    metadataList
-                )
+            text "test"
 
 -- rekursive Methode um im Baum den Knoten mit der richtigen ID zu finden
 findNode : String -> List TreeNode -> Maybe TreeNode

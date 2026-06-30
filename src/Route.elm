@@ -4,26 +4,28 @@ import Url.Parser exposing (Parser, (</>), top, map, oneOf, s, string, parse)
 
 type Route
   = 
-  Top
+  Home
   | Tree String
   | Node String String
 
 -- top ist Homepage
 routeParser : Parser (Route -> a) a
 routeParser =
+  s "TaxoView" </>
   oneOf
     [
      map Node (s "tree" </> string </> s "node" </> string)
     , map Tree (s "tree" </> string)
-    ,  map Top top
+    ,  map Home top
     ]
 
 -- Methode zur Parserbenutzung
 parseUrl : Url -> Route
 parseUrl url =
     parse routeParser url
-        |> Maybe.withDefault Top
+        |> Maybe.withDefault Home
 
 -- Beispiele
--- /tree/primates --> Just(Tree "primates")
+-- /TaxoView --> Just (Home)
+-- /TaxoView/tree/primates --> Just(Tree "primates")
 -- /tree/primates/node/Human --> Just(Node "primates" "human")
