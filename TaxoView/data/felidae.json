@@ -1,0 +1,163 @@
+{
+  "id": "felidae",
+  "label": "Felidae",
+  "rank": "family",
+  "metadata": {
+    "scientificName": "Felidae",
+    "commonName": "Katzen",
+    "description": "Familie der Raubtiere, die Groß- und Kleinkatzen umfasst."
+  },
+  "children": [
+    {
+      "id": "pantherinae",
+      "label": "Pantherinae",
+      "rank": "subfamily",
+      "metadata": {
+        "commonName": "Großkatzen"
+      },
+      "children": [
+        {
+          "id": "panthera",
+          "label": "Panthera",
+          "rank": "genus",
+          "metadata": {
+            "commonName": "Eigentliche Großkatzen"
+          },
+          "children": [
+            {
+              "id": "panthera_leo",
+              "label": "Panthera leo",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Löwe"
+              },
+              "children": []
+            },
+            {
+              "id": "panthera_tigris",
+              "label": "Panthera tigris",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Tiger"
+              },
+              "children": []
+            },
+            {
+              "id": "panthera_pardus",
+              "label": "Panthera pardus",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Leopard"
+              },
+              "children": []
+            },
+            {
+              "id": "panthera_onca",
+              "label": "Panthera onca",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Jaguar"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "neofelis",
+          "label": "Neofelis",
+          "rank": "genus",
+          "metadata": {
+            "commonName": "Nebelparder"
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "felinae",
+      "label": "Felinae",
+      "rank": "subfamily",
+      "metadata": {
+        "commonName": "Kleinkatzen"
+      },
+      "children": [
+        {
+          "id": "acinonyx",
+          "label": "Acinonyx",
+          "rank": "genus",
+          "metadata": {
+            "commonName": "Gepard"
+          },
+          "children": [
+            {
+              "id": "acinonyx_jubatus",
+              "label": "Acinonyx jubatus",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Gepard"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "puma",
+          "label": "Puma",
+          "rank": "genus",
+          "metadata": {
+            "commonName": "Pumas"
+          },
+          "children": [
+            {
+              "id": "puma_concolor",
+              "label": "Puma concolor",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Puma"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "lynx",
+          "label": "Lynx",
+          "rank": "genus",
+          "metadata": {
+            "commonName": "Luchse"
+          },
+          "children": [
+            {
+              "id": "lynx_lynx",
+              "label": "Lynx lynx",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Eurasischer Luchs"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "felis",
+          "label": "Felis",
+          "rank": "genus",
+          "metadata": {
+            "commonName": "Echte Kleinkatzen"
+          },
+          "children": [
+            {
+              "id": "felis_catus",
+              "label": "Felis catus",
+              "rank": "species",
+              "metadata": {
+                "commonName": "Hauskatze"
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
