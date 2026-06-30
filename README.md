@@ -11,3 +11,14 @@ SVG-Top-Down-Darstellung von biologischen Taxonomien (Daten von: https://www.gbi
 - Define JSON.Decoder for Trees (Wie kommen wir von JSON zu Elm-Daten?)
 - Define SVG-Tree-Darstellung using elm-visualization (Wie kommen wir von Elm-Daten zu Baumdarstellung?)
 - Add Metadata to example data (Um Metadaten-Modal bei Knotenklick aufzurufen)
+
+
+### Notizen
+Da wir eine SPA bauen, werden Internal Links über onUrlRequest und die Funktion pushUrl abgefange und verhindern die echte Browser-Navigation. Das verhindert direktes Laden von Seiten über den Browser, da der Server nur die index.html kennt
+
+
+
+### Erweiterungsmöglichkeiten:
+- Error Messages bei HTTP-Request anstatt einfach auf Homepage zu bleiben
+- Einbinden von GbifApi
+- Suchfeld

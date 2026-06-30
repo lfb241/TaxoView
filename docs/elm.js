@@ -6552,9 +6552,7 @@ var $author$project$Main$loadFromUrl = F2(
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
-					return _Utils_Tuple2(
-						model,
-						$author$project$Main$getTreeData(treename));
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			default:
 				return _Utils_Tuple2(
@@ -6762,29 +6760,18 @@ var $author$project$Main$update = F2(
 					if (_v3.$ === 'Ok') {
 						var nodeList = _v3.a;
 						var _v4 = $author$project$Route$parseUrl(model.url);
-						switch (_v4.$) {
-							case 'Tree':
-								var name = _v4.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											state: $author$project$Main$Viz(
-												{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization', treename: name})
-										}),
-									$elm$core$Platform$Cmd$none);
-							case 'Node':
-								var name = _v4.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											state: $author$project$Main$Viz(
-												{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization', treename: name})
-										}),
-									A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/tree/' + name));
-							default:
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						if (_v4.$ === 'Tree') {
+							var name = _v4.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										state: $author$project$Main$Viz(
+											{activeMetadata: $elm$core$Maybe$Nothing, nodes: nodeList, title: 'Visualization', treename: name})
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 					} else {
 						return _Utils_Tuple2(
