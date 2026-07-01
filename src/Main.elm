@@ -318,7 +318,7 @@ contentView model =
             div [ class "container" ]
                 [ div [ class "box" ]
                     [ p [ class "mb-2" ]
-                        [ text "Gib einen Suchbegriff ein, um biologische Organismen in der Datenbank zu finden." ]
+                        [ text "Gib einen Suchbegriff ein, um biologische Organismen in der Datenbank zu finden (derzeit Primaten und Katzen als Beispieldaten)." ]
                     , p []
                         [ text "Klicke anschließend auf 'Visualisierung', um den zugehörigen Baum zu öffnen." ]
                     ]
