@@ -5365,7 +5365,13 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Main$Home = {$: 'Home'};
+var $author$project$Main$Home = function (a) {
+	return {$: 'Home', a: a};
+};
+var $author$project$Main$GotKeyValueData = F2(
+	function (a, b) {
+		return {$: 'GotKeyValueData', a: a, b: b};
+	});
 var $author$project$Main$Viz = function (a) {
 	return {$: 'Viz', a: a};
 };
@@ -5378,49 +5384,7 @@ var $elm$core$Maybe$andThen = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $author$project$Tree$TreeNode = F5(
-	function (a, b, c, d, e) {
-		return {$: 'TreeNode', a: a, b: b, c: c, d: d, e: e};
-	});
-var $author$project$Main$findNode = F2(
-	function (targetId, nodes) {
-		findNode:
-		while (true) {
-			if (!nodes.b) {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var _v1 = nodes.a;
-				var id = _v1.a;
-				var label = _v1.b;
-				var rank = _v1.c;
-				var meta = _v1.d;
-				var children = _v1.e;
-				var rest = nodes.b;
-				if (_Utils_eq(id, targetId)) {
-					return $elm$core$Maybe$Just(
-						A5($author$project$Tree$TreeNode, id, label, rank, meta, children));
-				} else {
-					var _v2 = A2(
-						$elm$core$Maybe$andThen,
-						$author$project$Main$findNode(targetId),
-						children);
-					if (_v2.$ === 'Just') {
-						var found = _v2.a;
-						return $elm$core$Maybe$Just(found);
-					} else {
-						var $temp$targetId = targetId,
-							$temp$nodes = rest;
-						targetId = $temp$targetId;
-						nodes = $temp$nodes;
-						continue findNode;
-					}
-				}
-			}
-		}
-	});
-var $author$project$Main$GotTree = function (a) {
-	return {$: 'GotTree', a: a};
-};
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 'BadStatus_', a: a, b: b};
@@ -5976,17 +5940,6 @@ var $elm$http$Http$expectStringResponse = F2(
 			$elm$core$Basics$identity,
 			A2($elm$core$Basics$composeR, toResult, toMsg));
 	});
-var $elm$http$Http$BadBody = function (a) {
-	return {$: 'BadBody', a: a};
-};
-var $elm$http$Http$BadStatus = function (a) {
-	return {$: 'BadStatus', a: a};
-};
-var $elm$http$Http$BadUrl = function (a) {
-	return {$: 'BadUrl', a: a};
-};
-var $elm$http$Http$NetworkError = {$: 'NetworkError'};
-var $elm$http$Http$Timeout = {$: 'Timeout'};
 var $elm$core$Result$mapError = F2(
 	function (f, result) {
 		if (result.$ === 'Ok') {
@@ -5998,6 +5951,17 @@ var $elm$core$Result$mapError = F2(
 				f(e));
 		}
 	});
+var $elm$http$Http$BadBody = function (a) {
+	return {$: 'BadBody', a: a};
+};
+var $elm$http$Http$BadStatus = function (a) {
+	return {$: 'BadStatus', a: a};
+};
+var $elm$http$Http$BadUrl = function (a) {
+	return {$: 'BadUrl', a: a};
+};
+var $elm$http$Http$NetworkError = {$: 'NetworkError'};
+var $elm$http$Http$Timeout = {$: 'Timeout'};
 var $elm$http$Http$resolve = F2(
 	function (toResult, response) {
 		switch (response.$) {
@@ -6021,12 +5985,59 @@ var $elm$http$Http$resolve = F2(
 					toResult(body));
 		}
 	});
-var $elm$http$Http$expectString = function (toMsg) {
-	return A2(
-		$elm$http$Http$expectStringResponse,
-		toMsg,
-		$elm$http$Http$resolve($elm$core$Result$Ok));
-};
+var $elm$http$Http$expectJson = F2(
+	function (toMsg, decoder) {
+		return A2(
+			$elm$http$Http$expectStringResponse,
+			toMsg,
+			$elm$http$Http$resolve(
+				function (string) {
+					return A2(
+						$elm$core$Result$mapError,
+						$elm$json$Json$Decode$errorToString,
+						A2($elm$json$Json$Decode$decodeString, decoder, string));
+				}));
+	});
+var $author$project$Tree$TreeNode = F5(
+	function (a, b, c, d, e) {
+		return {$: 'TreeNode', a: a, b: b, c: c, d: d, e: e};
+	});
+var $author$project$Main$findNode = F2(
+	function (targetId, nodes) {
+		findNode:
+		while (true) {
+			if (!nodes.b) {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var _v1 = nodes.a;
+				var id = _v1.a;
+				var label = _v1.b;
+				var rank = _v1.c;
+				var meta = _v1.d;
+				var children = _v1.e;
+				var rest = nodes.b;
+				if (_Utils_eq(id, targetId)) {
+					return $elm$core$Maybe$Just(
+						A5($author$project$Tree$TreeNode, id, label, rank, meta, children));
+				} else {
+					var _v2 = A2(
+						$elm$core$Maybe$andThen,
+						$author$project$Main$findNode(targetId),
+						children);
+					if (_v2.$ === 'Just') {
+						var found = _v2.a;
+						return $elm$core$Maybe$Just(found);
+					} else {
+						var $temp$targetId = targetId,
+							$temp$nodes = rest;
+						targetId = $temp$targetId;
+						nodes = $temp$nodes;
+						continue findNode;
+					}
+				}
+			}
+		}
+	});
 var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
@@ -6200,6 +6211,15 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $author$project$Main$GotTree = function (a) {
+	return {$: 'GotTree', a: a};
+};
+var $elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$elm$http$Http$resolve($elm$core$Result$Ok));
+};
 var $author$project$Main$getTreeData = function (name) {
 	return $elm$http$Http$get(
 		{
@@ -6207,6 +6227,7 @@ var $author$project$Main$getTreeData = function (name) {
 			url: '/TaxoView/data/' + (name + '.json')
 		});
 };
+var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Route$Home = {$: 'Home'};
@@ -6333,6 +6354,9 @@ var $author$project$Route$Node = F2(
 	function (a, b) {
 		return {$: 'Node', a: a, b: b};
 	});
+var $author$project$Route$Search = function (a) {
+	return {$: 'Search', a: a};
+};
 var $author$project$Route$Tree = function (a) {
 	return {$: 'Tree', a: a};
 };
@@ -6399,6 +6423,47 @@ var $elm$url$Url$Parser$oneOf = function (parsers) {
 				parsers);
 		});
 };
+var $elm$url$Url$Parser$query = function (_v0) {
+	var queryParser = _v0.a;
+	return $elm$url$Url$Parser$Parser(
+		function (_v1) {
+			var visited = _v1.visited;
+			var unvisited = _v1.unvisited;
+			var params = _v1.params;
+			var frag = _v1.frag;
+			var value = _v1.value;
+			return _List_fromArray(
+				[
+					A5(
+					$elm$url$Url$Parser$State,
+					visited,
+					unvisited,
+					params,
+					frag,
+					value(
+						queryParser(params)))
+				]);
+		});
+};
+var $elm$url$Url$Parser$slash = F2(
+	function (_v0, _v1) {
+		var parseBefore = _v0.a;
+		var parseAfter = _v1.a;
+		return $elm$url$Url$Parser$Parser(
+			function (state) {
+				return A2(
+					$elm$core$List$concatMap,
+					parseAfter,
+					parseBefore(state));
+			});
+	});
+var $elm$url$Url$Parser$questionMark = F2(
+	function (parser, queryParser) {
+		return A2(
+			$elm$url$Url$Parser$slash,
+			parser,
+			$elm$url$Url$Parser$query(queryParser));
+	});
 var $elm$url$Url$Parser$s = function (str) {
 	return $elm$url$Url$Parser$Parser(
 		function (_v0) {
@@ -6425,18 +6490,6 @@ var $elm$url$Url$Parser$s = function (str) {
 			}
 		});
 };
-var $elm$url$Url$Parser$slash = F2(
-	function (_v0, _v1) {
-		var parseBefore = _v0.a;
-		var parseAfter = _v1.a;
-		return $elm$url$Url$Parser$Parser(
-			function (state) {
-				return A2(
-					$elm$core$List$concatMap,
-					parseAfter,
-					parseBefore(state));
-			});
-	});
 var $elm$url$Url$Parser$custom = F2(
 	function (tipe, stringToSomething) {
 		return $elm$url$Url$Parser$Parser(
@@ -6471,6 +6524,42 @@ var $elm$url$Url$Parser$custom = F2(
 			});
 	});
 var $elm$url$Url$Parser$string = A2($elm$url$Url$Parser$custom, 'STRING', $elm$core$Maybe$Just);
+var $elm$url$Url$Parser$Internal$Parser = function (a) {
+	return {$: 'Parser', a: a};
+};
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $elm$url$Url$Parser$Query$custom = F2(
+	function (key, func) {
+		return $elm$url$Url$Parser$Internal$Parser(
+			function (dict) {
+				return func(
+					A2(
+						$elm$core$Maybe$withDefault,
+						_List_Nil,
+						A2($elm$core$Dict$get, key, dict)));
+			});
+	});
+var $elm$url$Url$Parser$Query$string = function (key) {
+	return A2(
+		$elm$url$Url$Parser$Query$custom,
+		key,
+		function (stringList) {
+			if (stringList.b && (!stringList.b.b)) {
+				var str = stringList.a;
+				return $elm$core$Maybe$Just(str);
+			} else {
+				return $elm$core$Maybe$Nothing;
+			}
+		});
+};
 var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 	function (state) {
 		return _List_fromArray(
@@ -6502,23 +6591,22 @@ var $author$project$Route$routeParser = A2(
 					$elm$url$Url$Parser$slash,
 					$elm$url$Url$Parser$s('tree'),
 					$elm$url$Url$Parser$string)),
+				A2(
+				$elm$url$Url$Parser$map,
+				$author$project$Route$Search,
+				A2(
+					$elm$url$Url$Parser$questionMark,
+					$elm$url$Url$Parser$s('search'),
+					$elm$url$Url$Parser$Query$string('query'))),
 				A2($elm$url$Url$Parser$map, $author$project$Route$Home, $elm$url$Url$Parser$top)
 			])));
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $author$project$Route$parseUrl = function (url) {
 	return A2(
 		$elm$core$Maybe$withDefault,
 		$author$project$Route$Home,
 		A2($elm$url$Url$Parser$parse, $author$project$Route$routeParser, url));
 };
+var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$loadFromUrl = F2(
 	function (url, model) {
 		var _v0 = $author$project$Route$parseUrl(url);
@@ -6529,7 +6617,6 @@ var $author$project$Main$loadFromUrl = F2(
 					model,
 					$author$project$Main$getTreeData(name));
 			case 'Node':
-				var treename = _v0.a;
 				var nodename = _v0.b;
 				var _v1 = model.state;
 				if (_v1.$ === 'Viz') {
@@ -6554,22 +6641,68 @@ var $author$project$Main$loadFromUrl = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			case 'Search':
+				var query = _v0.a;
+				var _v3 = model.state;
+				if (_v3.$ === 'Home') {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								state: $author$project$Main$Home(
+									{
+										formString: A2($elm$core$Maybe$withDefault, '', query),
+										keyValueData: $elm$core$Maybe$Nothing,
+										results: $elm$core$Maybe$Nothing,
+										showResultTable: false
+									})
+							}),
+						$elm$http$Http$get(
+							{
+								expect: A2(
+									$elm$http$Http$expectJson,
+									$author$project$Main$GotKeyValueData(query),
+									$elm$json$Json$Decode$keyValuePairs($elm$json$Json$Decode$string)),
+								url: '/TaxoView/data/name_pairs.json'
+							}));
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								state: $author$project$Main$Home(
+									{
+										formString: A2($elm$core$Maybe$withDefault, '', query),
+										keyValueData: $elm$core$Maybe$Nothing,
+										results: $elm$core$Maybe$Nothing,
+										showResultTable: false
+									})
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{state: $author$project$Main$Home}),
+						{
+							state: $author$project$Main$Home(
+								{formString: '', keyValueData: $elm$core$Maybe$Nothing, results: $elm$core$Maybe$Nothing, showResultTable: false})
+						}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$init = F3(
 	function (_v0, url, key) {
-		var model = {key: key, state: $author$project$Main$Home, url: url};
+		var model = {
+			key: key,
+			state: $author$project$Main$Home(
+				{formString: '', keyValueData: $elm$core$Maybe$Nothing, results: $elm$core$Maybe$Nothing, showResultTable: false}),
+			url: url
+		};
 		return A2($author$project$Main$loadFromUrl, url, model);
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$core$Result$map = F2(
 	function (func, ra) {
 		if (ra.$ === 'Ok') {
@@ -6620,7 +6753,6 @@ var $elm$core$Maybe$map = F2(
 		}
 	});
 var $elm$json$Json$Decode$map3 = _Json_map3;
-var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Tree$metadataDecoder = $elm$json$Json$Decode$maybe(
 	A2(
 		$elm$json$Json$Decode$field,
@@ -6679,6 +6811,37 @@ var $author$project$Tree$decodeTreeString = function (jsonString) {
 		},
 		A2($elm$json$Json$Decode$decodeString, $author$project$Tree$treeDecoder, jsonString));
 };
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $author$project$Main$findMatchingValues = F2(
+	function (query, pairs) {
+		if (query === '') {
+			return _List_Nil;
+		} else {
+			return A2(
+				$elm$core$List$map,
+				function (_v2) {
+					var value = _v2.b;
+					return value;
+				},
+				A2(
+					$elm$core$List$filter,
+					function (_v1) {
+						var key = _v1.a;
+						return A2($elm$core$String$contains, query, key);
+					},
+					pairs));
+		}
+	});
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var $elm$url$Url$addPort = F2(
@@ -6777,17 +6940,23 @@ var $author$project$Main$update = F2(
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{state: $author$project$Main$Home}),
+								{
+									state: $author$project$Main$Home(
+										{formString: '', keyValueData: $elm$core$Maybe$Nothing, results: $elm$core$Maybe$Nothing, showResultTable: false})
+								}),
 							$elm$core$Platform$Cmd$none);
 					}
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{state: $author$project$Main$Home}),
+							{
+								state: $author$project$Main$Home(
+									{formString: '', keyValueData: $elm$core$Maybe$Nothing, results: $elm$core$Maybe$Nothing, showResultTable: false})
+							}),
 						$elm$core$Platform$Cmd$none);
 				}
-			default:
+			case 'SelectNode':
 				var node = msg.a;
 				var id = node.a;
 				var _v6 = model.state;
@@ -6796,6 +6965,67 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						model,
 						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/tree/' + (viz.treename + ('/node/' + id))));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'UpdateFormString':
+				var string = msg.a;
+				var _v7 = model.state;
+				if (_v7.$ === 'Home') {
+					var home = _v7.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								state: $author$project$Main$Home(
+									_Utils_update(
+										home,
+										{formString: string}))
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'SubmitForm':
+				var _v8 = model.state;
+				if (_v8.$ === 'Home') {
+					var home = _v8.a;
+					return _Utils_Tuple2(
+						model,
+						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/search?query=' + home.formString));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				var query = msg.a;
+				var result = msg.b;
+				var _v9 = model.state;
+				if (_v9.$ === 'Home') {
+					var home = _v9.a;
+					if (result.$ === 'Ok') {
+						var data = result.a;
+						var _v11 = A2(
+							$author$project$Main$findMatchingValues,
+							A2($elm$core$Maybe$withDefault, '', query),
+							data);
+						var results = _v11;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									state: $author$project$Main$Home(
+										_Utils_update(
+											home,
+											{
+												keyValueData: $elm$core$Maybe$Just(data),
+												results: $elm$core$Maybe$Just(results),
+												showResultTable: true
+											}))
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					}
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -6813,7 +7043,12 @@ var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('
 var $author$project$Main$SelectNode = function (a) {
 	return {$: 'SelectNode', a: a};
 };
+var $author$project$Main$SubmitForm = {$: 'SubmitForm'};
+var $author$project$Main$UpdateFormString = function (a) {
+	return {$: 'UpdateFormString', a: a};
+};
 var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
@@ -7025,139 +7260,495 @@ var $author$project$VisualTree$draw = F2(
 			}
 		}
 	});
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $elm$html$Html$i = _VirtualDom_node('i');
 var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$html$Html$strong = _VirtualDom_node('strong');
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		$elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
 var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $elm$html$Html$tbody = _VirtualDom_node('tbody');
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$html$Html$th = _VirtualDom_node('th');
+var $elm$html$Html$thead = _VirtualDom_node('thead');
+var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Tree$metadataToList = function (metadata) {
+	return A2(
+		$elm$core$List$map,
+		function (m) {
+			switch (m.$) {
+				case 'ScientificName':
+					var value = m.a;
+					return _Utils_Tuple2('Wissenschaftlicher Name', value);
+				case 'CommonName':
+					var value = m.a;
+					return _Utils_Tuple2('Trivialname', value);
+				default:
+					var value = m.a;
+					return _Utils_Tuple2('Beschreibung', value);
+			}
+		},
+		metadata);
+};
 var $author$project$Main$viewMetadata = function (maybeMetadata) {
 	if (maybeMetadata.$ === 'Nothing') {
 		return A2(
 			$elm$html$Html$p,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('has-text-grey')
+				]),
 			_List_fromArray(
 				[
 					$elm$html$Html$text('Klicken Sie auf einen Knoten, um Details zu sehen.')
 				]));
 	} else {
 		var metadataList = maybeMetadata.a;
-		return $elm$html$Html$text('testtestetst');
-	}
-};
-var $author$project$Main$contentView = function (state) {
-	if (state.$ === 'Home') {
 		return A2(
 			$elm$html$Html$div,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('content')
+				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$input,
+					$elm$html$Html$table,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('input is-link'),
-							$elm$html$Html$Attributes$type_('text'),
-							$elm$html$Html$Attributes$placeholder('Suche in Datenbank nach biologischen Entitäten...')
-						]),
-					_List_Nil),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('container')
+							$elm$html$Html$Attributes$class('table is-fullwidth is-narrow')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							$elm$html$Html$strong,
+							$elm$html$Html$tbody,
+							_List_Nil,
+							A2(
+								$elm$core$List$map,
+								function (_v1) {
+									var key = _v1.a;
+									var val = _v1.b;
+									return A2(
+										$elm$html$Html$tr,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$th,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('has-text-link'),
+														A2($elm$html$Html$Attributes$style, 'width', '40%')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text(key)
+													])),
+												A2(
+												$elm$html$Html$td,
+												_List_Nil,
+												_List_fromArray(
+													[
+														$elm$html$Html$text(val)
+													]))
+											]));
+								},
+								$author$project$Tree$metadataToList(metadataList)))
+						]))
+				]));
+	}
+};
+var $author$project$Main$contentView = function (model) {
+	var _v0 = model.state;
+	if (_v0.$ === 'Home') {
+		var home = _v0.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('box')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('mb-2')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Gib einen Suchbegriff ein, um biologische Organismen in der Datenbank zu finden.')
+								])),
+							A2(
+							$elm$html$Html$p,
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Verfügbare Beispieldaten:')
-								])),
+									$elm$html$Html$text('Klicke anschließend auf \'Visualisierung\', um den zugehörigen Baum zu öffnen.')
+								]))
+						])),
+					A2(
+					$elm$html$Html$form,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onSubmit($author$project$Main$SubmitForm)
+						]),
+					_List_fromArray(
+						[
 							A2(
 							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$class('buttons')
+									$elm$html$Html$Attributes$class('field has-addons is-justify-content-center')
 								]),
 							_List_fromArray(
 								[
 									A2(
-									$elm$html$Html$a,
+									$elm$html$Html$div,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$href('/TaxoView/tree/primates'),
-											$elm$html$Html$Attributes$class('button is-info')
+											$elm$html$Html$Attributes$class('control has-icons-left is-expanded')
 										]),
 									_List_fromArray(
 										[
-											$elm$html$Html$text('Primaten')
+											A2(
+											$elm$html$Html$input,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('input is-link'),
+													$elm$html$Html$Attributes$type_('text'),
+													$elm$html$Html$Attributes$placeholder('Suche in Datenbank nach biologischen Entitäten...'),
+													$elm$html$Html$Attributes$value(home.formString),
+													$elm$html$Html$Events$onInput($author$project$Main$UpdateFormString)
+												]),
+											_List_Nil),
+											A2(
+											$elm$html$Html$span,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('icon is-left')
+												]),
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$i,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('fas fa-search')
+														]),
+													_List_Nil)
+												]))
 										])),
 									A2(
-									$elm$html$Html$a,
+									$elm$html$Html$div,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$href('/TaxoView/tree/felidae'),
-											$elm$html$Html$Attributes$class('button is-info')
+											$elm$html$Html$Attributes$class('control')
 										]),
 									_List_fromArray(
 										[
-											$elm$html$Html$text('Felidae')
+											A2(
+											$elm$html$Html$button,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('button is-link'),
+													$elm$html$Html$Attributes$type_('submit')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Suchen')
+												]))
 										]))
 								]))
-						]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('container mt-4')
+						]),
+					home.showResultTable ? _List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('table-container box')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$table,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('table is-striped is-hoverable is-fullwidth')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$thead,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$tr,
+													_List_Nil,
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$th,
+															_List_Nil,
+															_List_fromArray(
+																[
+																	$elm$html$Html$text('Biologische Entitäten:')
+																])),
+															A2($elm$html$Html$th, _List_Nil, _List_Nil)
+														]))
+												])),
+											A2(
+											$elm$html$Html$tbody,
+											_List_Nil,
+											$elm$core$List$isEmpty(
+												A2($elm$core$Maybe$withDefault, _List_Nil, home.results)) ? _List_fromArray(
+												[
+													A2(
+													$elm$html$Html$tr,
+													_List_Nil,
+													_List_fromArray(
+														[
+															A2(
+															$elm$html$Html$td,
+															_List_fromArray(
+																[
+																	$elm$html$Html$Attributes$class('has-text-centered')
+																]),
+															_List_fromArray(
+																[
+																	A2(
+																	$elm$html$Html$div,
+																	_List_fromArray(
+																		[
+																			$elm$html$Html$Attributes$class('notification is-warning is-light')
+																		]),
+																	_List_fromArray(
+																		[
+																			$elm$html$Html$text('Keine Einträge gefunden... Versuche es nochmal!')
+																		]))
+																])),
+															A2($elm$html$Html$td, _List_Nil, _List_Nil)
+														]))
+												]) : A2(
+												$elm$core$List$map,
+												function (x) {
+													return A2(
+														$elm$html$Html$tr,
+														_List_Nil,
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$td,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$class('is-vcentered')
+																	]),
+																_List_fromArray(
+																	[
+																		$elm$html$Html$text(x)
+																	])),
+																A2(
+																$elm$html$Html$td,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$class('is-vcentered has-text-right')
+																	]),
+																_List_fromArray(
+																	[
+																		A2(
+																		$elm$html$Html$a,
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$Attributes$href('/TaxoView/tree/' + x),
+																				$elm$html$Html$Attributes$class('button is-info is-small')
+																			]),
+																		_List_fromArray(
+																			[
+																				$elm$html$Html$text('Visualisierung')
+																			]))
+																	]))
+															]));
+												},
+												A2($elm$core$Maybe$withDefault, _List_Nil, home.results)))
+										]))
+								]))
+						]) : _List_Nil)
 				]));
 	} else {
-		var viz = state.a;
+		var viz = _v0.a;
 		return A2(
 			$elm$html$Html$div,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container')
+				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$h2,
-					_List_Nil,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$text(viz.title)
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_Nil,
+							$elm$html$Html$Attributes$class('box')
+						]),
 					_List_fromArray(
 						[
 							A2(
-							$elm$html$Html$h3,
-							_List_Nil,
+							$elm$html$Html$p,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Taxonomie-Baum')
+									$elm$html$Html$Attributes$class('title is-5')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Visualisierung von: ' + viz.treename)
 								])),
 							A2(
-							$author$project$VisualTree$draw,
-							$author$project$Main$SelectNode,
-							$elm$core$Maybe$Just(viz.nodes))
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('subtitle is-6')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Klicke auf Knoten, um auf weitere Daten der Entität zuzugreifen...')
+								]))
 						])),
 					A2(
 					$elm$html$Html$div,
-					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('box')
+						]),
 					_List_fromArray(
 						[
 							A2(
-							$elm$html$Html$h3,
-							_List_Nil,
+							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Metadaten Details')
+									$elm$html$Html$Attributes$class('is-flex is-justify-content-center')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$div,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'width', '100%'),
+											A2($elm$html$Html$Attributes$style, 'max-width', '1000px')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$author$project$VisualTree$draw,
+											$author$project$Main$SelectNode,
+											$elm$core$Maybe$Just(viz.nodes))
+										]))
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('box')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('title is-6')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Metadaten')
 								])),
 							$author$project$Main$viewMetadata(viz.activeMetadata)
 						]))
@@ -7169,7 +7760,7 @@ var $author$project$Main$footerView = A2(
 	$elm$html$Html$footer,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$class('footer')
+			$elm$html$Html$Attributes$class('footer py-3')
 		]),
 	_List_fromArray(
 		[
@@ -7177,43 +7768,50 @@ var $author$project$Main$footerView = A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('container')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova')
-				])),
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('container')
+					$elm$html$Html$Attributes$class('content')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$a,
+					$elm$html$Html$p,
+					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$href('https://github.com/lfb241/TaxoView')
-						]),
+							$elm$html$Html$text('Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Github-Code')
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('https://github.com/lfb241/TaxoView'),
+									$elm$html$Html$Attributes$class('has-text-link')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Github-Code')
+								]))
 						]))
 				]))
 		]));
 var $elm$html$Html$section = _VirtualDom_node('section');
 var $author$project$Main$headerView = A2(
-	$elm$html$Html$div,
-	_List_Nil,
+	$elm$html$Html$section,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('hero is-link')
+		]),
 	_List_fromArray(
 		[
 			A2(
-			$elm$html$Html$section,
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('hero is-link')
+					$elm$html$Html$Attributes$class('hero-body py-5')
 				]),
 			_List_fromArray(
 				[
@@ -7221,38 +7819,29 @@ var $author$project$Main$headerView = A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('hero-body py-4')
+							$elm$html$Html$Attributes$class('container')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							$elm$html$Html$div,
+							$elm$html$Html$p,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$class('container')
+									$elm$html$Html$Attributes$class('title')
 								]),
 							_List_fromArray(
 								[
-									A2(
-									$elm$html$Html$p,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('title')
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('TaxoView')
-										])),
-									A2(
-									$elm$html$Html$p,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('subtitle')
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('Visualisierung phylogenetischer Stammbäume')
-										]))
+									$elm$html$Html$text('TaxoView')
+								])),
+							A2(
+							$elm$html$Html$p,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('subtitle')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Visualisierung phylogenetischer Stammbäume')
 								]))
 						]))
 				]))
@@ -7263,7 +7852,11 @@ var $author$project$Main$view = function (model) {
 			[
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('is-flex is-flex-direction-column'),
+						A2($elm$html$Html$Attributes$style, 'min-height', '100vh')
+					]),
 				_List_fromArray(
 					[
 						$author$project$Main$headerView,
@@ -7271,7 +7864,7 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$section,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('section content-section')
+								$elm$html$Html$Attributes$class('section is-flex-grow-1')
 							]),
 						_List_fromArray(
 							[
@@ -7283,7 +7876,7 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$author$project$Main$contentView(model.state)
+										$author$project$Main$contentView(model)
 									]))
 							])),
 						$author$project$Main$footerView
