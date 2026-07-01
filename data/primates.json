@@ -3,7 +3,7 @@
   "label": "Primates",
   "rank": "order",
   "metadata": {
-    "scientificName": "Preimates",
+    "scientificName": "Primates",
     "commonName": "Primaten",
     "description": "Ordnung der Säugetiere, zu der Affen, Menschenaffen und der Mensch gehören."
   },
@@ -13,7 +13,9 @@
       "label": "Strepsirrhini",
       "rank": "suborder",
       "metadata": {
-        "commonName": "Feuchtnasenprimaten"
+        "scientificName": "Strepsirrhini",
+        "commonName": "Feuchtnasenprimaten",
+        "description": "Unterordnung der Primaten mit feuchter, unbehaarter Nasenkuppe (Rhinarium); umfasst Lemuren, Loris und Galagos."
       },
       "children": [
         {
@@ -21,7 +23,9 @@
           "label": "Lemuridae",
           "rank": "family",
           "metadata": {
-            "commonName": "Lemuren"
+            "scientificName": "Lemuridae",
+            "commonName": "Lemuren",
+            "description": "Familie von Feuchtnasenprimaten, die endemisch auf Madagaskar vorkommen und sich durch einen ausgeprägten Geruchssinn auszeichnen."
           },
           "children": []
         },
@@ -30,7 +34,9 @@
           "label": "Lorisidae",
           "rank": "family",
           "metadata": {
-            "commonName": "Loris"
+            "scientificName": "Lorisidae",
+            "commonName": "Loris",
+            "description": "Familie nachtaktiver, langsam kletternder Feuchtnasenprimaten aus Afrika und Süd-/Südostasien."
           },
           "children": []
         }
@@ -41,7 +47,9 @@
       "label": "Haplorhini",
       "rank": "suborder",
       "metadata": {
-        "commonName": "Trockennasenprimaten"
+        "scientificName": "Haplorhini",
+        "commonName": "Trockennasenprimaten",
+        "description": "Unterordnung der Primaten mit trockener Nasenkuppe; umfasst Koboldmakis und alle Affen (Simiiformes)."
       },
       "children": [
         {
@@ -49,7 +57,9 @@
           "label": "Tarsiidae",
           "rank": "family",
           "metadata": {
-            "commonName": "Koboldmakis"
+            "scientificName": "Tarsiidae",
+            "commonName": "Koboldmakis",
+            "description": "Familie kleiner, nachtaktiver Primaten mit extrem großen Augen, beheimatet auf südostasiatischen Inseln."
           },
           "children": []
         },
@@ -58,7 +68,9 @@
           "label": "Simiiformes",
           "rank": "infraorder",
           "metadata": {
-            "commonName": "Affen"
+            "scientificName": "Simiiformes",
+            "commonName": "Affen",
+            "description": "Infraordnung der Trockennasenprimaten, die Neuweltaffen, Altweltaffen und Menschenaffen umfasst."
           },
           "children": [
             {
@@ -66,7 +78,9 @@
               "label": "Cebidae",
               "rank": "family",
               "metadata": {
-                "commonName": "Kapuzinerartige"
+                "scientificName": "Cebidae",
+                "commonName": "Kapuzinerartige",
+                "description": "Familie der Neuweltaffen, zu der u. a. Kapuzineraffen, Totenkopfaffen und Krallenaffen gehören."
               },
               "children": []
             },
@@ -75,7 +89,9 @@
               "label": "Cercopithecidae",
               "rank": "family",
               "metadata": {
-                "commonName": "Altweltaffen"
+                "scientificName": "Cercopithecidae",
+                "commonName": "Altweltaffen",
+                "description": "Familie der Altweltaffen mit Vertretern wie Meerkatzen, Pavianen und Languren, verbreitet in Afrika und Asien."
               },
               "children": []
             },
@@ -84,7 +100,9 @@
               "label": "Hominidae",
               "rank": "family",
               "metadata": {
-                "commonName": "Menschenaffen"
+                "scientificName": "Hominidae",
+                "commonName": "Menschenaffen",
+                "description": "Familie der großen Menschenaffen, zu der Orang-Utans, Gorillas, Schimpansen und der Mensch gehören."
               },
               "children": [
                 {
@@ -92,7 +110,9 @@
                   "label": "Pongo",
                   "rank": "genus",
                   "metadata": {
-                    "commonName": "Orang-Utans"
+                    "scientificName": "Pongo",
+                    "commonName": "Orang-Utans",
+                    "description": "Gattung großer, überwiegend baumbewohnender Menschenaffen, heimisch auf Borneo und Sumatra."
                   },
                   "children": []
                 },
@@ -101,7 +121,9 @@
                   "label": "Gorilla",
                   "rank": "genus",
                   "metadata": {
-                    "commonName": "Gorillas"
+                    "scientificName": "Gorilla",
+                    "commonName": "Gorillas",
+                    "description": "Gattung der größten lebenden Primaten, beheimatet in den Wäldern Zentralafrikas."
                   },
                   "children": []
                 },
@@ -110,7 +132,9 @@
                   "label": "Pan",
                   "rank": "genus",
                   "metadata": {
-                    "commonName": "Schimpansen"
+                    "scientificName": "Pan",
+                    "commonName": "Schimpansen",
+                    "description": "Gattung der Menschenaffen mit den Arten Schimpanse und Bonobo, den nächsten lebenden Verwandten des Menschen."
                   },
                   "children": []
                 },
@@ -119,7 +143,9 @@
                   "label": "Homo",
                   "rank": "genus",
                   "metadata": {
-                    "commonName": "Menschen"
+                    "scientificName": "Homo",
+                    "commonName": "Menschen",
+                    "description": "Gattung der Hominiden, deren einzige noch lebende Art der moderne Mensch (Homo sapiens) ist."
                   },
                   "children": [
                     {
@@ -127,7 +153,9 @@
                       "label": "Homo sapiens",
                       "rank": "species",
                       "metadata": {
-                        "commonName": "Mensch"
+                        "scientificName": "Homo sapiens",
+                        "commonName": "Mensch",
+                        "description": "Einzige noch lebende Art der Gattung Homo, gekennzeichnet durch hochentwickelte Kognition, Sprache und Kultur."
                       },
                       "children": []
                     }
