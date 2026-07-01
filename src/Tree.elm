@@ -1,4 +1,4 @@
-module Tree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToList)
+module Tree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToPairs)
 import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
 
@@ -21,11 +21,12 @@ TODO:
 - Methode metadataToList implementieren
 -}
 
--- soll Metadaten als key-value-pair anzeigen
-metadataToList : List Metadata -> List ( String, String )
-metadataToList metadata =
+-- Liste von Metadaten wird als key-value-pair ausgegeben
+metadataToPairs : List Metadata -> List ( String, String )
+metadataToPairs metadata =
     List.map
         (\m ->
+            -- Pattern matching hochspezialisiert auf die Metadaten unserer Beispiele
             case m of
                 ScientificName value ->
                     ( "Wissenschaftlicher Name", value )

@@ -7031,6 +7031,7 @@ var $author$project$Main$update = F2(
 				}
 		}
 	});
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -7047,7 +7048,6 @@ var $author$project$Main$SubmitForm = {$: 'SubmitForm'};
 var $author$project$Main$UpdateFormString = function (a) {
 	return {$: 'UpdateFormString', a: a};
 };
-var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$virtual_dom$VirtualDom$attribute = F2(
@@ -7267,7 +7267,6 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var $elm$html$Html$i = _VirtualDom_node('i');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
@@ -7331,7 +7330,6 @@ var $elm$html$Html$Events$onSubmit = function (msg) {
 };
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$html$Html$table = _VirtualDom_node('table');
@@ -7342,7 +7340,7 @@ var $elm$html$Html$thead = _VirtualDom_node('thead');
 var $elm$html$Html$tr = _VirtualDom_node('tr');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
-var $author$project$Tree$metadataToList = function (metadata) {
+var $author$project$Tree$metadataToPairs = function (metadata) {
 	return A2(
 		$elm$core$List$map,
 		function (m) {
@@ -7423,7 +7421,7 @@ var $author$project$Main$viewMetadata = function (maybeMetadata) {
 													]))
 											]));
 								},
-								$author$project$Tree$metadataToList(metadataList)))
+								$author$project$Tree$metadataToPairs(metadataList)))
 						]))
 				]));
 	}
@@ -7434,10 +7432,7 @@ var $author$project$Main$contentView = function (model) {
 		var home = _v0.a;
 		return A2(
 			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('container')
-				]),
+			_List_Nil,
 			_List_fromArray(
 				[
 					A2(
@@ -7456,7 +7451,7 @@ var $author$project$Main$contentView = function (model) {
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text('Gib einen Suchbegriff ein, um biologische Organismen in der Datenbank zu finden.')
+									$elm$html$Html$text('Gib einen Suchbegriff ein, um biologische Organismen in der Datenbank zu finden (derzeit Primaten und Katzen als Beispieldaten).')
 								])),
 							A2(
 							$elm$html$Html$p,
@@ -7486,7 +7481,7 @@ var $author$project$Main$contentView = function (model) {
 									$elm$html$Html$div,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$class('control has-icons-left is-expanded')
+											$elm$html$Html$Attributes$class('control is-expanded')
 										]),
 									_List_fromArray(
 										[
@@ -7500,23 +7495,7 @@ var $author$project$Main$contentView = function (model) {
 													$elm$html$Html$Attributes$value(home.formString),
 													$elm$html$Html$Events$onInput($author$project$Main$UpdateFormString)
 												]),
-											_List_Nil),
-											A2(
-											$elm$html$Html$span,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('icon is-left')
-												]),
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$i,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('fas fa-search')
-														]),
-													_List_Nil)
-												]))
+											_List_Nil)
 										])),
 									A2(
 									$elm$html$Html$div,
@@ -7665,10 +7644,7 @@ var $author$project$Main$contentView = function (model) {
 		var viz = _v0.a;
 		return A2(
 			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('container')
-				]),
+			_List_Nil,
 			_List_fromArray(
 				[
 					A2(
@@ -7756,96 +7732,7 @@ var $author$project$Main$contentView = function (model) {
 	}
 };
 var $elm$html$Html$footer = _VirtualDom_node('footer');
-var $author$project$Main$footerView = A2(
-	$elm$html$Html$footer,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('footer py-3')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('content')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova')
-						])),
-					A2(
-					$elm$html$Html$p,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$a,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$href('https://github.com/lfb241/TaxoView'),
-									$elm$html$Html$Attributes$class('has-text-link')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Github-Code')
-								]))
-						]))
-				]))
-		]));
 var $elm$html$Html$section = _VirtualDom_node('section');
-var $author$project$Main$headerView = A2(
-	$elm$html$Html$section,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('hero is-link')
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('hero-body py-5')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('container')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$p,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('title')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('TaxoView')
-								])),
-							A2(
-							$elm$html$Html$p,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('subtitle')
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Visualisierung phylogenetischer Stammbäume')
-								]))
-						]))
-				]))
-		]));
 var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
@@ -7859,7 +7746,53 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$headerView,
+						A2(
+						$elm$html$Html$section,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('hero is-link')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('hero-body py-5')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$div,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('container')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$p,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('title')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('TaxoView')
+													])),
+												A2(
+												$elm$html$Html$p,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('subtitle')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Visualisierung phylogenetischer Stammbäume')
+													]))
+											]))
+									]))
+							])),
 						A2(
 						$elm$html$Html$section,
 						_List_fromArray(
@@ -7879,7 +7812,48 @@ var $author$project$Main$view = function (model) {
 										$author$project$Main$contentView(model)
 									]))
 							])),
-						$author$project$Main$footerView
+						A2(
+						$elm$html$Html$footer,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('footer py-3')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('content')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$p,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Projekt für das WWW-Modul SoSe26, von Luke-Felix Brüske und Katherina Shapilova')
+											])),
+										A2(
+										$elm$html$Html$p,
+										_List_Nil,
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$href('https://github.com/lfb241/TaxoView'),
+														$elm$html$Html$Attributes$class('button is-black')
+													]),
+												_List_fromArray(
+													[
+														$elm$html$Html$text('Github-Code')
+													]))
+											]))
+									]))
+							]))
 					]))
 			]),
 		title: 'TaxoView'
