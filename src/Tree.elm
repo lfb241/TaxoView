@@ -22,9 +22,21 @@ TODO:
 -}
 
 -- soll Metadaten als key-value-pair anzeigen
-metadataToList: List(Metadata) -> List(String, String)
-metadataToList metadata = [("Test","Test")]
+metadataToList : List Metadata -> List ( String, String )
+metadataToList metadata =
+    List.map
+        (\m ->
+            case m of
+                ScientificName value ->
+                    ( "Wissenschaftlicher Name", value )
 
+                CommonName value ->
+                    ( "Trivialname", value )
+
+                Description value ->
+                    ( "Beschreibung", value )
+        )
+        metadata
 --Decoder for metadata
 metadataDecoder : Decoder (Maybe (List Metadata))
 metadataDecoder =

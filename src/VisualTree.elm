@@ -8,6 +8,7 @@ import TypedSvg.Core exposing (attribute)
 import TypedSvg.Events exposing (onClick)
 
 -- Methode macht aus TreeNode-Liste ein HTML-Objekt
+-- TODO: responsive machen
 draw : (TreeNode -> msg) -> Maybe (List TreeNode) -> Html msg
 draw onSelect maybeTree =
     case maybeTree of
