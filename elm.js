@@ -6228,6 +6228,7 @@ var $author$project$Main$getTreeData = function (name) {
 		});
 };
 var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var $elm$core$Debug$log = _Debug_log;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Route$Home = {$: 'Home'};
@@ -6565,51 +6566,77 @@ var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 		return _List_fromArray(
 			[state]);
 	});
-var $author$project$Route$routeParser = A2(
-	$elm$url$Url$Parser$slash,
-	$elm$url$Url$Parser$s('TaxoView'),
-	$elm$url$Url$Parser$oneOf(
-		_List_fromArray(
-			[
-				A2(
-				$elm$url$Url$Parser$map,
-				$author$project$Route$Node,
+var $author$project$Route$routeParser = $elm$url$Url$Parser$oneOf(
+	_List_fromArray(
+		[
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$Node,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('tree'),
 				A2(
 					$elm$url$Url$Parser$slash,
-					$elm$url$Url$Parser$s('tree'),
+					$elm$url$Url$Parser$string,
 					A2(
 						$elm$url$Url$Parser$slash,
-						$elm$url$Url$Parser$string,
-						A2(
-							$elm$url$Url$Parser$slash,
-							$elm$url$Url$Parser$s('node'),
-							$elm$url$Url$Parser$string)))),
-				A2(
-				$elm$url$Url$Parser$map,
-				$author$project$Route$Tree,
-				A2(
-					$elm$url$Url$Parser$slash,
-					$elm$url$Url$Parser$s('tree'),
-					$elm$url$Url$Parser$string)),
-				A2(
-				$elm$url$Url$Parser$map,
-				$author$project$Route$Search,
-				A2(
-					$elm$url$Url$Parser$questionMark,
-					$elm$url$Url$Parser$s('search'),
-					$elm$url$Url$Parser$Query$string('query'))),
-				A2($elm$url$Url$Parser$map, $author$project$Route$Home, $elm$url$Url$Parser$top)
-			])));
+						$elm$url$Url$Parser$s('node'),
+						$elm$url$Url$Parser$string)))),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$Tree,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('tree'),
+				$elm$url$Url$Parser$string)),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$Search,
+			A2(
+				$elm$url$Url$Parser$questionMark,
+				$elm$url$Url$Parser$s('search'),
+				$elm$url$Url$Parser$Query$string('query'))),
+			A2($elm$url$Url$Parser$map, $author$project$Route$Home, $elm$url$Url$Parser$top)
+		]));
 var $author$project$Route$parseUrl = function (url) {
+	var fragment = A2($elm$core$Maybe$withDefault, '', url.fragment);
+	var _v0 = function () {
+		var _v1 = A2($elm$core$String$split, '?', fragment);
+		if (_v1.b) {
+			if (!_v1.b.b) {
+				var onlyPath = _v1.a;
+				return _Utils_Tuple2(onlyPath, $elm$core$Maybe$Nothing);
+			} else {
+				var onlyPath = _v1.a;
+				var rest = _v1.b;
+				return _Utils_Tuple2(
+					onlyPath,
+					$elm$core$Maybe$Just(
+						A2($elm$core$String$join, '?', rest)));
+			}
+		} else {
+			return _Utils_Tuple2('', $elm$core$Maybe$Nothing);
+		}
+	}();
+	var path = _v0.a;
+	var query = _v0.b;
 	return A2(
 		$elm$core$Maybe$withDefault,
 		$author$project$Route$Home,
-		A2($elm$url$Url$Parser$parse, $author$project$Route$routeParser, url));
+		A2(
+			$elm$url$Url$Parser$parse,
+			$author$project$Route$routeParser,
+			_Utils_update(
+				url,
+				{fragment: $elm$core$Maybe$Nothing, path: path, query: query})));
 };
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$loadFromUrl = F2(
 	function (url, model) {
-		var _v0 = $author$project$Route$parseUrl(url);
+		var _v0 = A2(
+			$elm$core$Debug$log,
+			'parsed route',
+			$author$project$Route$parseUrl(url));
 		switch (_v0.$) {
 			case 'Tree':
 				var name = _v0.a;
@@ -6964,7 +6991,7 @@ var $author$project$Main$update = F2(
 					var viz = _v6.a;
 					return _Utils_Tuple2(
 						model,
-						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/tree/' + (viz.treename + ('/node/' + id))));
+						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/#/tree/' + (viz.treename + ('/node/' + id))));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -6992,7 +7019,7 @@ var $author$project$Main$update = F2(
 					var home = _v8.a;
 					return _Utils_Tuple2(
 						model,
-						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/search?query=' + home.formString));
+						A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/TaxoView/#/search?query=' + home.formString));
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -7625,7 +7652,7 @@ var $author$project$Main$contentView = function (model) {
 																		$elm$html$Html$a,
 																		_List_fromArray(
 																			[
-																				$elm$html$Html$Attributes$href('/TaxoView/tree/' + x),
+																				$elm$html$Html$Attributes$href('/TaxoView/#/tree/' + x),
 																				$elm$html$Html$Attributes$class('button is-info is-small')
 																			]),
 																		_List_fromArray(

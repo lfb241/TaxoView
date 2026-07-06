@@ -94,6 +94,7 @@ init _ url key =
 loadFromUrl : Url.Url -> Model -> ( Model, Cmd Msg )
 loadFromUrl url model =
     -- parseUrl aus Route.elm gibt ein Objekt vom Typ Route aus
+        
     case parseUrl url of
         
         Tree name ->
@@ -188,7 +189,7 @@ update msg model =
                     case model.state of
                         Viz viz ->
                             ( model
-                            , Nav.pushUrl model.key ("/TaxoView/tree/" ++ viz.treename ++ "/node/" ++ id)
+                            , Nav.pushUrl model.key ("/TaxoView/#/tree/" ++ viz.treename ++ "/node/" ++ id)
                             )
 
                         _ ->
@@ -208,7 +209,7 @@ update msg model =
             case model.state of
                 Home home ->
                     ( model
-                    , Nav.pushUrl model.key ("/TaxoView/search?query=" ++ home.formString)
+                    , Nav.pushUrl model.key ("/TaxoView/#/search?query=" ++ home.formString)
                     )
                 _ ->
                     (model, Cmd.none)
@@ -356,7 +357,7 @@ contentView model =
                                                     -- button nach rechts
                                                     , td [ class "is-vcentered has-text-right" ]
                                                         [ a
-                                                            [ href ("/TaxoView/tree/" ++ x)
+                                                            [ href ("/TaxoView/#/tree/" ++ x)
                                                             , class "button is-info is-small"
                                                             ]
                                                             [ text "Visualisierung" ]
