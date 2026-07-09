@@ -1,47 +1,35 @@
 --elm install gampleman/elm-visualization
 module VisualTree exposing (draw)
 
+import Hierarchy
 import Html exposing (Html)
 import TaxonTree exposing (TreeNode(..))
+import Tree as RoseTree exposing (Tree)
 import TypedSvg exposing (circle, g, line, svg, text_)
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Core exposing (attribute)
 import TypedSvg.Events exposing (onClick)
 
-
-type alias LayoutNode =
-    { node : TreeNode
+-- Speichert alle Informationen, die für die Darstellung eines Knotens
+--         im SVG benötigt werden (Position, Größe und zugehörige Taxonomie)
+type alias NodeData =
+    { taxon : TreeNode
     , label : String
     , rank : String
-    , x : Float
-    , y : Float
-    , children : List LayoutNode
+    , width : Float
+    , height : Float
     }
 
-
-leafSpacing : Float
-leafSpacing =
-    120
-
-
-levelSpacing : Float
-levelSpacing =
-    100
-
-
-paddingX : Float
-paddingX =
+-- Abstand zwischen dem Baum und dem Rand des SVG
+padding : Float
+padding =
     80
 
 
-paddingY : Float
-paddingY =
-    70
-
-
--- Erstellt einen responsiven SVG-Baum
--- Die Koordinaten der Knoten werden nach einem „Tidy“-Layout berechnet:
--- Blattknoten werden gleichmäßig verteilt, und übergeordnete Knoten werden über ihren untergeordneten Knoten zentriert
+-- Hauptfunktion zur Darstellung eines phylogenetischen Baumes
+-- Die Baumstruktur wird zunächst in einen RoseTree umgewandelt und anschließend
+--          mit dem Tidy-Layout-Algorithmus (Hierarchy.tidy) positioniert
+-- Dadurch werden überlappende Knoten vermieden
 draw : (TreeNode -> msg) -> Maybe (List TreeNode) -> Html msg
 draw onSelect maybeTree =
     case maybeTree of
@@ -49,184 +37,159 @@ draw onSelect maybeTree =
             Html.div [] [ Html.text "No Data" ]
 
         Just [] ->
-            Html.div [] [ Html.text "Empty Tree" ]
+            Html.div [] [ Html.text "Baum ist leer" ]
 
         Just roots ->
             let
-                ( _, layoutRoots ) =
-                    layoutForest 0 0 roots
+                tidyRoots =
+                    List.map (toRoseTree >> tidyLayout) roots
 
-                leafCount =
-                    List.sum (List.map countLeaves roots)
+                allNodes =
+                    List.concatMap RoseTree.toList tidyRoots
 
-                maxDepth =
-                    List.maximum (List.map treeDepth roots)
-                        |> Maybe.withDefault 1
+                minX =
+                    List.minimum (List.map .x allNodes) |> Maybe.withDefault 0
+
+                maxX =
+                    List.maximum (List.map (\n -> n.x + n.width) allNodes) |> Maybe.withDefault 1200
+
+                maxY =
+                    List.maximum (List.map (\n -> n.y + n.height) allNodes) |> Maybe.withDefault 800
+
+                offsetX =
+                    padding - minX
+
+                offsetY =
+                    padding
 
                 svgWidth =
-                    max 1200 (paddingX * 2 + toFloat leafCount * leafSpacing)
+                    max 1200 (maxX - minX + padding * 2)
 
                 svgHeight =
-                    max 800 (paddingY * 2 + toFloat maxDepth * levelSpacing)
+                    max 800 (maxY + padding * 2)
             in
             svg
                 [ viewBox 0 0 svgWidth svgHeight
                 , attribute "class" "tree-svg"
                 , attribute "preserveAspectRatio" "xMidYMin meet"
                 ]
-                (List.concatMap renderLinks layoutRoots
-                    ++ List.concatMap (flatten >> List.map (renderNode onSelect)) layoutRoots
+                (List.concatMap (renderLinks offsetX offsetY) tidyRoots
+                    ++ List.concatMap
+                        (\root ->
+                            root
+                                |> RoseTree.toList
+                                |> List.map (renderNode onSelect offsetX offsetY)
+                        )
+                        tidyRoots
                 )
 
 
--- Berechnet das Layout für eine Liste von root nodes
-layoutForest : Int -> Float -> List TreeNode -> ( Float, List LayoutNode )
-layoutForest depth nextLeaf nodes =
-    case nodes of
-        [] ->
-            ( nextLeaf, [] )
-
-        node :: rest ->
+-- Konvertiert unsere eigene TreeNode-Struktur in einen RoseTree,
+--          der vom Hierarchy-Modul verarbeitet werden kann
+toRoseTree : TreeNode -> Tree NodeData
+toRoseTree taxon =
+    case taxon of
+        TreeNode _ label rank _ maybeChildren ->
             let
-                ( nextAfterNode, layoutNode ) =
-                    layoutTree depth nextLeaf node
+                children =
+                    Maybe.withDefault [] maybeChildren
 
-                ( finalNext, layoutRest ) =
-                    layoutForest depth nextAfterNode rest
+                data =
+                    { taxon = taxon
+                    , label = label
+                    , rank = rank
+                    , width = nodeWidth label
+                    , height = 50
+                    }
             in
-            ( finalNext, layoutNode :: layoutRest )
+            case children of
+                [] ->
+                    RoseTree.singleton data
 
+                _ ->
+                    RoseTree.tree data (List.map toRoseTree children)
 
--- Berechnet das Layout für einen Knoten
--- Blattknoten erhalten die nächste freie X-Position
--- Innenknoten werden über ihren untergeordneten Knoten zentriert
-layoutTree : Int -> Float -> TreeNode -> ( Float, LayoutNode )
-layoutTree depth nextLeaf node =
-    let
-        ( label, rank, rawChildren ) =
-            case node of
-                TreeNode _ nodeLabel nodeRank _ maybeChildren ->
-                    ( nodeLabel, nodeRank, Maybe.withDefault [] maybeChildren )
+-- Berechnet automatisch die Position jedes Knotens mithilfe
+--         des Tidy-Layout-Algorithmus aus elm-visualization
+tidyLayout :
+    Tree NodeData
+    -> Tree { x : Float, y : Float, width : Float, height : Float, node : NodeData }
+tidyLayout tree =
+    Hierarchy.tidy
+        [ Hierarchy.nodeSize
+            (\node ->
+                ( node.width, node.height )
+            )
+        , Hierarchy.parentChildMargin 70
+        , Hierarchy.peerMargin 35
+        , Hierarchy.layered
+        ]
+        tree
 
-        yPos =
-            paddingY + toFloat depth * levelSpacing
-    in
-    case rawChildren of
-        [] ->
-            let
-                xPos =
-                    paddingX + nextLeaf * leafSpacing
-            in
-            ( nextLeaf + 1
-            , { node = node
-              , label = label
-              , rank = rank
-              , x = xPos
-              , y = yPos
-              , children = []
-              }
+-- Zeichnet alle Verbindungslinien zwischen Eltern- und Kindknoten
+renderLinks :
+    Float
+    -> Float
+    -> Tree { x : Float, y : Float, width : Float, height : Float, node : NodeData }
+    -> List (Html msg)
+renderLinks offsetX offsetY tree =
+    tree
+        |> RoseTree.links
+        |> List.map
+            (\( from, to ) ->
+                line
+                    [ attribute "x1" (String.fromFloat (offsetX + from.x + from.width / 2))
+                    , attribute "y1" (String.fromFloat (offsetY + from.y + from.height))
+                    , attribute "x2" (String.fromFloat (offsetX + to.x + to.width / 2))
+                    , attribute "y2" (String.fromFloat (offsetY + to.y))
+                    , attribute "stroke" "#dee2e6"
+                    , attribute "stroke-width" "2"
+                    ]
+                    []
             )
 
-        _ ->
-            let
-                ( nextAfterChildren, layoutChildren ) =
-                    layoutForest (depth + 1) nextLeaf rawChildren
-
-                childXs =
-                    List.map .x layoutChildren
-
-                xPos =
-                    case childXs of
-                        [] ->
-                            paddingX + nextLeaf * leafSpacing
-
-                        _ ->
-                            List.sum childXs / toFloat (List.length childXs)
-            in
-            ( nextAfterChildren
-            , { node = node
-              , label = label
-              , rank = rank
-              , x = xPos
-              , y = yPos
-              , children = layoutChildren
-              }
-            )
-
-
-renderLinks : LayoutNode -> List (Html msg)
-renderLinks parent =
+-- Zeichnet einen einzelnen Knoten inklusive Beschriftung
+-- Ein Klick auf den Knoten löst die Anzeige der Metadaten aus
+renderNode :
+    (TreeNode -> msg)
+    -> Float
+    -> Float
+    -> { x : Float, y : Float, width : Float, height : Float, node : NodeData }
+    -> Html msg
+renderNode onSelect offsetX offsetY item =
     let
-        directLinks =
-            List.map
-                (\child ->
-                    line
-                        [ attribute "x1" (String.fromFloat parent.x)
-                        , attribute "y1" (String.fromFloat parent.y)
-                        , attribute "x2" (String.fromFloat child.x)
-                        , attribute "y2" (String.fromFloat child.y)
-                        , attribute "stroke" "#dee2e6"
-                        , attribute "stroke-width" "2"
-                        ]
-                        []
-                )
-                parent.children
+        centerX =
+            offsetX + item.x + item.width / 2
+
+        centerY =
+            offsetY + item.y + item.height / 2
     in
-    directLinks ++ List.concatMap renderLinks parent.children
-
-
-renderNode : (TreeNode -> msg) -> LayoutNode -> Html msg
-renderNode onSelect item =
     g []
         [ circle
-            [ attribute "cx" (String.fromFloat item.x)
-            , attribute "cy" (String.fromFloat item.y)
+            [ attribute "cx" (String.fromFloat centerX)
+            , attribute "cy" (String.fromFloat centerY)
             , attribute "r" "16"
-            , attribute "fill" (colorForRank item.rank)
+            , attribute "fill" (colorForRank item.node.rank)
             , attribute "cursor" "pointer"
-            , onClick (onSelect item.node)
+            , onClick (onSelect item.node.taxon)
             ]
             []
         , text_
-            [ attribute "x" (String.fromFloat item.x)
-            , attribute "y" (String.fromFloat (item.y - 24))
+            [ attribute "x" (String.fromFloat centerX)
+            , attribute "y" (String.fromFloat (centerY - 24))
             , attribute "font-size" "13"
             , attribute "text-anchor" "middle"
             , attribute "fill" "#343a40"
             ]
-            [ Html.text item.label ]
+            [ Html.text item.node.label ]
         ]
 
+-- Berechnet die minimale Breite eines Knotens abhängig von der Länge der Beschriftung
+nodeWidth : String -> Float
+nodeWidth label =
+    max 90 (toFloat (String.length label) * 8 + 30)
 
-flatten : LayoutNode -> List LayoutNode
-flatten node =
-    node :: List.concatMap flatten node.children
-
-
-countLeaves : TreeNode -> Int
-countLeaves node =
-    case node of
-        TreeNode _ _ _ _ maybeChildren ->
-            case Maybe.withDefault [] maybeChildren of
-                [] ->
-                    1
-
-                children ->
-                    List.sum (List.map countLeaves children)
-
-
-treeDepth : TreeNode -> Int
-treeDepth node =
-    case node of
-        TreeNode _ _ _ _ maybeChildren ->
-            case Maybe.withDefault [] maybeChildren of
-                [] ->
-                    1
-
-                children ->
-                    1 + (List.maximum (List.map treeDepth children) |> Maybe.withDefault 0)
-
-
+-- Ordnet den verschiedenen taxonomischen Rängen unterschiedliche Farben zu
 colorForRank : String -> String
 colorForRank rank =
     case String.toLower rank of
@@ -253,3 +216,4 @@ colorForRank rank =
 
         _ ->
             "#adb5bd"
+
