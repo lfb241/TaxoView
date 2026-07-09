@@ -2,7 +2,7 @@
 module VisualTree exposing (draw)
 
 import Html exposing (Html)
-import Tree exposing (TreeNode(..))
+import TaxonTree exposing (TreeNode(..))
 import TypedSvg exposing (circle, g, line, svg, text_)
 import TypedSvg.Attributes exposing (viewBox)
 import TypedSvg.Core exposing (attribute)
