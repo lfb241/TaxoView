@@ -10,7 +10,7 @@ import Json.Decode as Decode
 import Route exposing (Route(..), parseUrl)
 import Tree exposing (Metadata(..), TreeNode(..), decodeTreeString, metadataToPairs)
 import Url
-import VisualTree
+import VisualTree.draw SelectNode (Just viz.nodes)
 import List
 import Html exposing (table)
 import Html exposing (thead)
