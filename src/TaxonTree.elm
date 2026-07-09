@@ -1,4 +1,4 @@
-module Tree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToPairs)
+module TaxonTree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToPairs)
 import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
 
