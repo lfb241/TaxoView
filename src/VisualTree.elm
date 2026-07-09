@@ -1,3 +1,4 @@
+--elm install gampleman/elm-visualization
 module VisualTree exposing (draw)
 
 import Html exposing (Html)
