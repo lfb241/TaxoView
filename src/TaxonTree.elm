@@ -1,4 +1,4 @@
-module Tree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToPairs)
+module TaxonTree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToPairs)
 import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
 
@@ -38,12 +38,13 @@ metadataToPairs metadata =
                     ( "Beschreibung", value )
         )
         metadata
+        
 --Decoder for metadata
 metadataDecoder : Decoder (Maybe (List Metadata))
 metadataDecoder =
-    maybe
-        (field "metadata"
-            (map3
+    Decode.maybe
+        (Decode.field "metadata"
+            (Decode.map3
                 (\sci common desc ->
                     List.filterMap identity
                         [ Maybe.map ScientificName sci
@@ -51,26 +52,26 @@ metadataDecoder =
                         , Maybe.map Description desc
                         ]
                 )
-                (maybe (field "scientificName" string))
-                (maybe (field "commonName" string))
-                (maybe (field "description" string))
+                (Decode.maybe (Decode.field "scientificName" Decode.string))
+                (Decode.maybe (Decode.field "commonName" Decode.string))
+                (Decode.maybe (Decode.field "description" Decode.string))
             )
         )
         
 --Decoder for TreeNode
 treeDecoder : Decoder TreeNode
 treeDecoder =
-    map5 TreeNode
-        (field "id" string)
-        (field "label" string)
-        (field "rank" string)
+    Decode.map5 TreeNode
+        (Decode.field "id" Decode.string)
+        (Decode.field "label" Decode.string)
+        (Decode.field "rank" Decode.string)
         metadataDecoder
         -- lazy vermeidet unendliche Rekursion
-        (maybe (field "children" (list (lazy (\_ -> treeDecoder)))))
+        (Decode.maybe (Decode.field "children" (Decode.list (Decode.lazy (\_ -> treeDecoder)))))
         
 -- Methode zur Nutzung des Decoders
-decodeTreeString : String -> Result Json.Decode.Error (List TreeNode)
+decodeTreeString : String -> Result Decode.Error (List TreeNode)
 decodeTreeString jsonString =
-    Json.Decode.decodeString treeDecoder jsonString
+    Decode.decodeString treeDecoder jsonString
         -- root to list
         |> Result.map (\node -> [ node ])
