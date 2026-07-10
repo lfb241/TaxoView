@@ -1,5 +1,6 @@
 module TaxonTree exposing (Metadata(..),TreeNode(..), decodeTreeString, metadataToPairs)
-import Json.Decode exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
+import Json.Decode as Decode
+--exposing (Decoder, field, string, list, maybe, lazy, map3, map5)
 
 
 -- Typ für Metadata, kann bei Bedarf erweitert werden
@@ -40,7 +41,7 @@ metadataToPairs metadata =
         metadata
         
 --Decoder for metadata
-metadataDecoder : Decoder (Maybe (List Metadata))
+metadataDecoder : Decode.Decoder (Maybe (List Metadata))
 metadataDecoder =
     Decode.maybe
         (Decode.field "metadata"
@@ -59,7 +60,7 @@ metadataDecoder =
         )
         
 --Decoder for TreeNode
-treeDecoder : Decoder TreeNode
+treeDecoder : Decode.Decoder TreeNode
 treeDecoder =
     Decode.map5 TreeNode
         (Decode.field "id" Decode.string)
