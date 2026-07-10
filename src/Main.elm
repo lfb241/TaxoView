@@ -8,7 +8,7 @@ import Html.Events exposing (onInput, onSubmit)
 import Http
 import Json.Decode as Decode
 import Route exposing (Route(..), parseUrl)
-import Tree exposing (Metadata(..), TreeNode(..), decodeTreeString, metadataToPairs)
+import TaxonTree exposing (Metadata(..), TreeNode(..), decodeTreeString, metadataToPairs)
 import Url
 import VisualTree
 import List
